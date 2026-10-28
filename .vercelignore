@@ -1,0 +1,3 @@
+# kept out of the Vercel deployment (they stay in the repo)
+.github/
+scripts/

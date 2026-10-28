@@ -1,0 +1,26 @@
+# Deploys the website to Vercel on every push to main. Needs a VERCEL_TOKEN repository secret
+# (a token from vercel.com/account/tokens). The first run creates the cube-icons project.
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: vercel-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      SCOPE: atwadux-gmailcoms-projects
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then echo "No VERCEL_TOKEN secret yet; skipping."; exit 0; fi
+          npx --yes vercel@latest link --yes --project cube-icons --scope "$SCOPE" --token "$VERCEL_TOKEN"
+          npx --yes vercel@latest deploy --prod --yes --scope "$SCOPE" --token "$VERCEL_TOKEN"

@@ -22,6 +22,14 @@
     SITE.mine = Object.keys(mine);
   } catch { SITE.mine = []; }
 
+  // visit counts: Vercel Web Analytics, served by Vercel itself (no cookies); skipped when the pages are opened as files
+  if (location.protocol.startsWith("http")) {
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    const va = document.createElement("script");
+    va.defer = true; va.src = "/_vercel/insights/script.js";
+    document.head.append(va);
+  }
+
   const PAGES = [
     ["index.html", "Playground"],
     ["docs.html", "Docs"],

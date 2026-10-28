@@ -41,13 +41,28 @@
   .site-head nav a[aria-current="page"] { opacity: 1; background: rgba(127,127,127,.16); }
   .site-head .ver { opacity: .55; }
   .site-head .gh { color: inherit; text-decoration: none; border: 1px solid var(--line, rgba(127,127,127,.3)); padding: 7px 10px; border-radius: 6px; }
+  .site-head .menu { display: none; align-items: center; gap: 8px; font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; background: none; border: 1px solid var(--line, rgba(127,127,127,.3)); padding: 7px 10px; border-radius: 6px; cursor: pointer; }
+  .site-head .menu b { display: grid; gap: 3px; width: 12px; }
+  .site-head .menu b::before, .site-head .menu b::after { content: ""; height: 1.5px; background: currentColor; transition: transform .2s; }
+  .site-head.open .menu b::before { transform: translateY(2.25px) rotate(45deg); }
+  .site-head.open .menu b::after { transform: translateY(-2.25px) rotate(-45deg); }
+  /* phones: brand, GitHub and a menu button on one row; the pages open underneath */
+  @media (max-width: 720px) {
+    .site-head { gap: 8px; }
+    .site-head .brand { margin-right: auto; }
+    .site-head .ver { display: none; }
+    .site-head .menu { display: inline-flex; }
+    .site-head nav { display: none; order: 9; flex: 1 0 100%; flex-direction: column; gap: 2px; padding-top: 8px; }
+    .site-head.open nav { display: flex; }
+    .site-head nav a { padding: 12px 10px; font-size: 13px; }
+  }
   .site-foot { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line, rgba(127,127,127,.25)); display: flex; gap: 8px 18px; flex-wrap: wrap; font: 12px/1.6 "Geist Mono", ui-monospace, monospace; opacity: .7; }
   .site-foot a { color: inherit; }
   .copy-wrap { position: relative; min-width: 0; max-width: 100%; }
   .copy-wrap > pre { padding-top: 38px !important; }
   .copy-btn { position: absolute; top: 8px; right: 8px; font: 500 10px/1 "Geist Mono", ui-monospace, monospace; letter-spacing: .06em; text-transform: uppercase; padding: 6px 8px; border-radius: 5px; cursor: pointer; color: inherit; background: rgba(127,127,127,.18); border: 1px solid rgba(127,127,127,.3); }
   .copy-btn:hover { background: rgba(127,127,127,.3); }
-  .site-head a:focus-visible, .copy-btn:focus-visible { outline: 2px solid #8d97ff; outline-offset: 2px; }`;
+  .site-head a:focus-visible, .site-head button:focus-visible, .copy-btn:focus-visible { outline: 2px solid #8d97ff; outline-offset: 2px; }`;
   const style = document.createElement("style");
   style.textContent = css;
   document.head.append(style);
@@ -55,9 +70,12 @@
   const head = document.createElement("header");
   head.className = "site-head";
   head.innerHTML = `<a class="brand" href="index.html"><i aria-hidden="true"></i>${SITE.name}</a>
-    <nav aria-label="Site">${PAGES.map(([href, label]) => `<a href="${href}"${href === here ? ' aria-current="page"' : ""}>${label}</a>`).join("")}</nav>
-    <span class="ver">v${version}</span><a class="gh" href="${SITE.repo}">GitHub</a>`;
+    <nav aria-label="Site" id="site-nav">${PAGES.map(([href, label]) => `<a href="${href}"${href === here ? ' aria-current="page"' : ""}>${label}</a>`).join("")}</nav>
+    <span class="ver">v${version}</span><a class="gh" href="${SITE.repo}">GitHub</a>
+    <button class="menu" type="button" aria-expanded="false" aria-controls="site-nav"><b aria-hidden="true"></b>Menu</button>`;
   document.body.prepend(head);
+  const toggle = head.querySelector(".menu");
+  toggle.addEventListener("click", () => toggle.setAttribute("aria-expanded", head.classList.toggle("open")));
 
   const foot = document.createElement("footer");
   foot.className = "site-foot";

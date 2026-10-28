@@ -22,6 +22,8 @@
   section { margin-top: 36px; }
   .row { display: grid; gap: 18px; grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr); }
   @media (max-width: 800px) { .row { grid-template-columns: minmax(0, 1fr); } }
+  /* stacked: the menu's stage goes above its links, so a tap shows what it built */
+  @media (max-width: 800px) { #menuStage { order: -1; height: 260px; } }
   .row.top { align-items: start; }
   canvas.big { width: 100%; height: 440px; display: block; background: var(--stage); border: 1px solid var(--stageLine); border-radius: 10px; transition: background .3s; }
   @media (min-width: 801px) { .row.top canvas.big { position: sticky; top: 16px; height: min(560px, calc(100vh - 32px)); } }
@@ -43,6 +45,8 @@
   .tile[aria-pressed="true"] { background: var(--stage); color: var(--stageText); border-color: var(--stageLine); }
   .tile[aria-pressed="true"] .label::before { content: "● "; color: var(--soft); }
   .tile canvas { width: 96px; height: 80px; }
+  /* phones: four icons a row instead of two */
+  @media (max-width: 560px) { .grid { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 6px; } .tile { padding: 8px 4px 7px; gap: 3px; } .tile canvas { width: 100%; height: 56px; } .tile .label { font-size: 9px; letter-spacing: .02em; } }
   .menu { list-style: none; margin: 0; padding: 0; }
   .menu li { border-top: 1px solid var(--line); }
   .menu button { all: unset; cursor: pointer; display: flex; align-items: flex-end; gap: 18px; width: 100%; padding: 4px 0 8px; font: 500 clamp(30px, 5vw, 64px)/1 "Bricolage Grotesque", sans-serif; letter-spacing: -0.045em; transition: opacity 0.25s; }
@@ -330,7 +334,8 @@
     b.addEventListener("focus", () => { menu.classList.add("dim"); menuStage.show(icon); });
     menu.append(li);
   });
-  menu.addEventListener("pointerleave", () => { menu.classList.remove("dim"); menuStage.clear(); });
+  // a lifted finger counts as leaving; on touch screens keep what the tap built
+  menu.addEventListener("pointerleave", (e) => { if (e.pointerType === "touch") return; menu.classList.remove("dim"); menuStage.clear(); });
 
   // scroll assembly: one stage per beat, bound to the scroll in the chosen mode
   let bound = [];

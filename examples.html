@@ -40,6 +40,8 @@
   /* menu */
   .menuDemo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; align-items: center; padding: 8px 18px; }
   @media (max-width: 640px) { .menuDemo { grid-template-columns: minmax(0, 1fr); } }
+  /* phones: the filters stay one row that scrolls sideways, so the sticky bar stays short */
+  @media (max-width: 640px) { .filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-left: calc(-1 * max(16px, 3vw)); margin-right: calc(-1 * max(16px, 3vw)); padding-left: max(16px, 3vw); padding-right: max(16px, 3vw); } .filters::-webkit-scrollbar { display: none; } .filters > * { flex: none; } }
   .menuDemo ul { list-style: none; margin: 0; padding: 0; }
   .menuDemo li + li { border-top: 1px solid var(--line); }
   .menuDemo a { display: block; padding: 6px 0; font-size: clamp(28px, 4vw, 44px); letter-spacing: -0.04em; color: var(--paper); text-decoration: none; transition: opacity .2s; }
@@ -434,7 +436,8 @@ button.onclick = () => stage.show("bolt");      // they gather into the icon, an
     a.addEventListener("pointerenter", () => menuStage.show(a.dataset.icon));
     a.addEventListener("focus", () => menuStage.show(a.dataset.icon));
   });
-  $("menuList").addEventListener("pointerleave", () => menuStage.clear());
+  // a lifted finger counts as leaving; on touch screens keep what the tap built
+  $("menuList").addEventListener("pointerleave", (e) => e.pointerType !== "touch" && menuStage.clear());
 
   // ---- button icons: small hand-drawn icons read better at button size than the full library ones
   const HEART = [".RR.RR.", "RRRRRRR", "RRRRRRR", ".RRRRR.", "..RRR..", "...R..."];
@@ -453,7 +456,7 @@ button.onclick = () => stage.show("bolt");      // they gather into the icon, an
     const on = () => { clearInterval(t); t = setInterval(() => s.show(frames[++i % 2]), 420); };
     const off = () => { clearInterval(t); i = 0; s.show(frames[0]); };
     $(btnId).addEventListener("pointerenter", on); $(btnId).addEventListener("focus", on);
-    $(btnId).addEventListener("pointerleave", off); $(btnId).addEventListener("blur", off);
+    $(btnId).addEventListener("pointerleave", (e) => (e.pointerType === "touch" ? setTimeout(off, 1600) : off())); $(btnId).addEventListener("blur", off);
   }
   nudge("btnDown", DOWN); nudge("btnNext", NEXT);
 
@@ -470,7 +473,7 @@ button.onclick = () => stage.show("bolt");      // they gather into the icon, an
   const hover = (el, st, icon) => {
     const on = () => st.show(icon), off = () => st.clear();
     el.addEventListener("pointerenter", on); el.addEventListener("focusin", on);
-    el.addEventListener("pointerleave", off); el.addEventListener("focusout", off);
+    el.addEventListener("pointerleave", (e) => e.pointerType !== "touch" && off()); el.addEventListener("focusout", off);
   };
   document.querySelectorAll(".feature").forEach((card) => hover(card, CubeIcons.stage(card.querySelector("canvas"), { view: "iso", look: "soft", depth: 1, tilt: false, max: 400 }), card.dataset.icon));
 

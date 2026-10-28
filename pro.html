@@ -167,7 +167,7 @@
       if (!t) continue;
       const [what, arg] = h.do.split(":");
       d.addEventListener("pointerenter", () => (what === "explode" ? t.st.explode(null, null, 2.2) : t.st.show(arg)));
-      if (what === "swap") d.addEventListener("pointerleave", () => t.st.show(t.icon));
+      if (what === "swap") d.addEventListener("pointerleave", (e) => e.pointerType !== "touch" && t.st.show(t.icon));
     }
     let started = false;
     function start() {

@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cube Icons</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+  :root { --ink: #0e0e10; --panel: #151518; --paper: #f1efea; --mute: #8a877f; --line: #2a2a2e; --accent: #2f3cff; --soft: #8d97ff; color-scheme: dark;
+    /* the stage backgrounds follow the Background setting */
+    --stage: #151518; --stageLine: #2a2a2e; --stageText: #8a877f; }
+  body[data-bg="paper"] { --stage: #ebe5da; --stageLine: #d6cdbf; --stageText: #6a6358; }
+  body[data-bg="blue"] { --stage: #16306f; --stageLine: #24418a; --stageText: #b9c8f2; }
+  body[data-bg="forest"] { --stage: #0b2414; --stageLine: #16402a; --stageText: #8fbf98; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ink); color: var(--paper); font: 15px/1.5 "Bricolage Grotesque", system-ui, sans-serif; padding: 24px max(16px, 3vw) 60px; }
+  .label { font: 500 11px/1.3 "Geist Mono", ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; }
+  h1 { margin: 6px 0 4px; font-size: clamp(30px, 4vw, 48px); line-height: 1; letter-spacing: -0.03em; font-weight: 500; }
+  h2 { margin: 0 0 12px; font-size: 22px; letter-spacing: -0.02em; font-weight: 500; }
+  p { color: var(--mute); max-width: 64ch; margin: 0; }
+  a { color: var(--soft); }
+  section { margin-top: 36px; }
+  .row { display: grid; gap: 18px; grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr); }
+  @media (max-width: 800px) { .row { grid-template-columns: minmax(0, 1fr); } }
+  .row.top { align-items: start; }
+  canvas.big { width: 100%; height: 440px; display: block; background: var(--stage); border: 1px solid var(--stageLine); border-radius: 10px; transition: background .3s; }
+  @media (min-width: 801px) { .row.top canvas.big { position: sticky; top: 16px; height: min(560px, calc(100vh - 32px)); } }
+  .controls { display: grid; gap: 14px; align-content: start; }
+  .controls label { display: grid; gap: 6px; }
+  .group { display: grid; gap: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .group > .label:first-child { color: var(--soft); }
+  .seg { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  button, .seg button { font: 500 11px/1 "Geist Mono", monospace; letter-spacing: 0.06em; text-transform: uppercase; color: var(--paper); background: none; border: 1px solid var(--line); padding: 9px 11px; cursor: pointer; }
+  button[aria-pressed="true"] { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+  button:focus-visible, .tile:focus-visible, input:focus-visible { outline: 2px solid var(--soft); outline-offset: 2px; }
+  input[type="range"] { width: 100%; accent-color: var(--accent); }
+  input[type="color"] { width: 38px; height: 32px; border: 1px solid var(--line); background: none; padding: 2px; vertical-align: middle; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  pre { margin: 0; padding: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow-x: auto; font: 12px/1.5 "Geist Mono", monospace; color: #c9cbe0; white-space: pre; }
+  .grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); }
+  .tile { display: grid; gap: 6px; justify-items: center; padding: 12px 8px 10px; background: var(--stage); border: 1px solid var(--stageLine); border-radius: 10px; cursor: pointer; color: var(--stageText); transition: background .3s; }
+  /* the kept icon: a quiet dot by its name, no coloured frame */
+  .tile[aria-pressed="true"] { background: var(--stage); color: var(--stageText); border-color: var(--stageLine); }
+  .tile[aria-pressed="true"] .label::before { content: "● "; color: var(--soft); }
+  .tile canvas { width: 96px; height: 80px; }
+  .menu { list-style: none; margin: 0; padding: 0; }
+  .menu li { border-top: 1px solid var(--line); }
+  .menu button { all: unset; cursor: pointer; display: flex; align-items: flex-end; gap: 18px; width: 100%; padding: 4px 0 8px; font: 500 clamp(30px, 5vw, 64px)/1 "Bricolage Grotesque", sans-serif; letter-spacing: -0.045em; transition: opacity 0.25s; }
+  .menu button span { font: 500 11px "Geist Mono", monospace; color: var(--soft); padding-bottom: 0.7em; letter-spacing: 0.06em; }
+  .menu.dim button:not(:hover) { opacity: 0.25; }
+  .beat { display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); align-items: center; min-height: 70vh; border-top: 1px solid var(--line); }
+  @media (max-width: 800px) { .beat { grid-template-columns: minmax(0, 1fr); min-height: 0; padding: 24px 0 48px; } }
+  .beat h3 { margin: 4px 0 6px; font-size: clamp(26px, 3.4vw, 40px); font-weight: 500; letter-spacing: -0.03em; line-height: 1; }
+  .beat canvas { width: 100%; height: 320px; display: block; background: var(--stage); border: 1px solid var(--stageLine); border-radius: 10px; transition: background .3s; }
+  /* in use: small live demos that link to their recipes */
+  .uses { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr)); }
+  .uses a { display: block; text-decoration: none; color: var(--paper); background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px 14px; transition: border-color .2s, transform .2s; }
+  .uses a:hover, .uses a:focus-visible { border-color: var(--soft); transform: translateY(-2px); }
+  .uses canvas { width: 100%; height: 150px; display: block; }
+  .uses b { font-weight: 500; display: block; }
+  .uses span { color: var(--mute); font-size: 14px; }
+  .ideas { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); }
+  .ideas div { border-top: 1px solid var(--line); padding-top: 10px; }
+  .ideas b { display: block; font-weight: 500; margin-bottom: 4px; }
+  code { font: 12px "Geist Mono", monospace; color: var(--soft); }
+</style>
+</head>
+<body data-bg="dark">
+  <h1>Cube Icons</h1>
+  <p>Pixel drawings built from cubes that fly in, settle and fly apart. Point at an icon to build it, and shape it with everything on the right: start from a preset, then change the look, colour, depth and motion. The code under the controls always matches what you see. New here? <a href="docs.html">Get started</a> takes two minutes. Draw your own icons, or turn an image into one, in <a href="editor.html">the editor</a>, and see twenty-eight ways to use them in <a href="examples.html">the recipes</a>.</p>
+
+  <section class="row top">
+    <canvas class="big" id="big" aria-label="The selected icon, built from cubes"></canvas>
+    <div class="controls">
+      <div class="group" style="border-top:0;padding-top:0">
+        <span class="label">Presets</span>
+        <div class="seg" id="presets" style="margin-top:0"></div>
+      </div>
+
+      <div class="group">
+        <span class="label">Look</span>
+        <div><span class="label">Style</span><div class="seg" id="look"></div></div>
+        <div><span class="label">Background</span><div class="seg" id="bg"></div></div>
+        <div><span class="label">Colour</span><div class="seg"><button type="button" id="full" aria-pressed="true">Full colour</button><label class="label" style="display:flex;gap:8px;align-items:center">One ink <input type="color" id="tint" value="#2f3cff" aria-label="Ink colour"></label></div></div>
+        <div><span class="label">Shadow</span><div class="seg" id="shadow"></div></div>
+      </div>
+
+      <div class="group">
+        <span class="label">Shape</span>
+        <div><span class="label">View</span><div class="seg" id="view"></div></div>
+        <div class="two">
+          <label><span class="label">Depth · <span id="depthV"></span></span><input id="depth" type="range" min="1" max="5"></label>
+          <label><span class="label">Gap · <span id="gapV"></span></span><input id="gap" type="range" min="0" max="35"></label>
+        </div>
+      </div>
+
+      <div class="group">
+        <span class="label">Motion</span>
+        <div><span class="label">Easing</span><div class="seg" id="ease"></div></div>
+        <div><span class="label">Fly in from</span><div class="seg" id="from"></div></div>
+        <div class="two">
+          <label><span class="label">Duration · <span id="durationV"></span></span><input id="duration" type="range" min="200" max="2000" step="50"></label>
+          <label><span class="label">Stagger · <span id="staggerV"></span></span><input id="stagger" type="range" min="0" max="800" step="10"></label>
+        </div>
+        <div class="two">
+          <label><span class="label">Spin · <span id="spinV"></span></span><input id="spin" type="range" min="0" max="100" step="5"></label>
+          <label><span class="label">Magnet · <span id="magnetV"></span></span><input id="magnet" type="range" min="0" max="30"></label>
+        </div>
+        <div class="two">
+          <label><span class="label">Glow · <span id="glowV"></span></span><input id="glow" type="range" min="0" max="100" step="5"></label>
+          <label><span class="label">Float · <span id="floatV"></span></span><input id="float" type="range" min="0" max="100" step="5"></label>
+        </div>
+        <div class="seg"><button type="button" id="tilt">Mouse tilt</button><button type="button" id="clear">Fly apart</button><button type="button" id="boom">Explode</button></div>
+      </div>
+
+      <div class="group">
+        <span class="label">As code · <span id="name" style="color:var(--mute)">—</span></span>
+        <pre id="code"></pre>
+        <div class="seg" style="margin-top:0"><button type="button" id="copy">Copy code</button><button type="button" id="reset">Reset all</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Icons</h2>
+    <p style="margin-bottom:14px">Drawn in the current settings. Point at one to build it above; click to keep it there.</p>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section>
+    <h2>In use</h2>
+    <p style="margin-bottom:14px">A few of the twenty-eight recipes, running live. Each one opens with its code.</p>
+    <div class="uses">
+      <a href="examples.html#clock"><canvas id="useClock" aria-label="The current time in cubes"></canvas><b>Live clock</b><span>The time, re-forming every second</span></a>
+      <a href="examples.html#weather"><canvas id="useWx" aria-hidden="true"></canvas><b>Weather</b><span>One stage, four forecasts</span></a>
+      <a href="examples.html#loading"><canvas id="useLoad" aria-hidden="true"></canvas><b>Loading</b><span>Progress you can watch build</span></a>
+      <a href="examples.html#text"><canvas id="useText" aria-hidden="true"></canvas><b>Text in cubes</b><span>Any word, in a pixel font</span></a>
+      <a href="examples.html#rating"><canvas id="useStar" aria-hidden="true"></canvas><b>Star rating</b><span>Stars that light up as you hover</span></a>
+      <a href="examples.html#looks"><canvas id="useLooks" aria-hidden="true"></canvas><b>Eleven looks</b><span>One option changes the style</span></a>
+    </div>
+  </section>
+
+  <section class="row">
+    <div>
+      <h2>In a menu</h2>
+      <p style="margin-bottom:14px">Nothing shows until you hover; each item builds its own object.</p>
+      <ul class="menu" id="menu"></ul>
+    </div>
+    <canvas class="big" id="menuStage" aria-label="The hovered menu item's icon"></canvas>
+  </section>
+
+  <section>
+    <h2>Scroll assembly</h2>
+    <p style="margin-bottom:14px">Each object builds as its section reaches the middle of the screen and comes apart as it leaves. <b>Scrub</b> ties the build to the scroll, cube by cube from the bottom row up; <b>Trigger</b> flies the whole icon in once half of it is in view. One line each: <code>CubeIcons.scroll(stage, "rocket")</code>.</p>
+    <div class="seg" id="scrollMode" style="margin-bottom:18px"><button type="button" data-m="scrub" aria-pressed="true">Scrub</button><button type="button" data-m="trigger">Trigger</button></div>
+    <div class="beat" data-icon="bulb"><div><p class="label" style="color:var(--soft)">01</p><h3>An idea</h3><p>It starts as a few cubes and a hunch.</p></div><canvas aria-label="A light bulb built from cubes"></canvas></div>
+    <div class="beat" data-icon="terminal"><div><p class="label" style="color:var(--soft)">02</p><h3>Build it</h3><p>Row by row, the thing takes shape.</p></div><canvas aria-label="A terminal window built from cubes"></canvas></div>
+    <div class="beat" data-icon="rocket"><div><p class="label" style="color:var(--soft)">03</p><h3>Launch</h3><p>Then it leaves, and the cubes go with it.</p></div><canvas aria-label="A rocket built from cubes"></canvas></div>
+  </section>
+
+  <section>
+    <h2>Interactions to try next</h2>
+    <p style="margin-bottom:14px">Explode, magnet, morph sequences and text are built now: see <a href="examples.html">the recipes</a>.</p>
+    <div class="ideas">
+      <div><b>Dither colour</b>Draw every other cube in a second colour for a halftone feel, in a one-ink style.</div>
+      <div><b>Icon from an image</b>Drop a small PNG on the editor, snap each pixel to the nearest palette colour, and get rows back.</div>
+      <div><b>Drag to turn</b>Drag the stage to swing the depth further than mouse tilt does, and let it ease back on release.</div>
+      <div><b>Export a clip</b>Record a stage's canvas while it builds and save a GIF or WebM for places that can't run scripts.</div>
+    </div>
+  </section>
+
+<script src="icons.js"></script>
+<script src="cubes.js"></script>
+<script src="site.js"></script>
+<script>
+  const $ = (id) => document.getElementById(id);
+
+  // every setting the panel controls; BASE is the engine's defaults, presets change only what they name
+  const BASE = { look: "flat", view: "front", depth: 2, gap: 0, shadow: undefined, tint: null, from: "auto", magnet: 0, duration: 700, ease: "expo", stagger: 260, spin: 0.25, glow: 0, float: 0, tilt: true, bg: "dark" };
+  const PRESETS = {
+    Original: {},
+    Toy: { look: "soft", gap: 0.06, bg: "paper" },
+    Clay: { look: "clay", gap: 0.04, bg: "paper", from: "below" },
+    Neon: { look: "neon", gap: 0.12 },
+    Glass: { look: "glass", view: "iso", depth: 3, gap: 0.06 },
+    Blueprint: { look: "wire", gap: 0.1, bg: "blue", tint: "#cfe0ff" },
+    Ink: { tint: "#2f3cff", bg: "paper" },
+    Comic: { look: "outline", gap: 0.04, bg: "paper", from: "above" },
+    Magnet: { look: "soft", magnet: 1.6, tilt: false, bg: "paper" },
+    Bouncy: { look: "soft", ease: "back", spin: 0.5, stagger: 400, bg: "paper" },
+    Calm: { look: "clay", ease: "cubic", duration: 1400, stagger: 700, spin: 0, bg: "paper" },
+    Candy: { look: "candy", gap: 0.04, ease: "back", spin: 0.4, bg: "paper" },
+    Paper: { look: "paper", depth: 1, spin: 0.1, bg: "paper", from: "above" },
+    Retro: { look: "pixel", ease: "linear", duration: 500, stagger: 600, spin: 0 },
+    Holo: { look: "holo", gap: 0.06, spin: 0.5 },
+    Glow: { look: "soft", tint: "#3cff3c", glow: 0.8, float: 0.6, spin: 0.5, gap: 0.04, bg: "forest" },
+    Ember: { look: "candy", tint: "#ff8a3c", glow: 0.6, float: 0.4, bg: "dark" },
+  };
+  const BG = { dark: "#151518", paper: "#ebe5da", blue: "#16306f", forest: "#0b2414" };
+  let cfg = { ...BASE }, preset = "Original", current = null;
+
+  const big = CubeIcons.stage($("big"));
+  const menuStage = CubeIcons.stage($("menuStage"));
+  const beats = [...document.querySelectorAll(".beat")].map((el) => ({ icon: el.dataset.icon, stage: CubeIcons.stage(el.querySelector("canvas"), { tilt: false }) }));
+  const stageOptions = () => { const { bg, ...o } = cfg; return o; };
+
+  // apply the settings everywhere: the big stage, the menu, the scroll beats and the thumbnails
+  function apply() {
+    const o = stageOptions();
+    big.set(o); menuStage.set(o);
+    beats.forEach((b) => b.stage.set({ ...o, tilt: false }));
+    document.body.dataset.bg = cfg.bg;
+    redrawStills(); sync(); writeCode();
+  }
+
+  // segmented controls built from lists; each sets one key
+  function segment(id, values, key, labels = {}) {
+    $(id).innerHTML = values.map((v) => `<button type="button" data-v="${v}">${labels[v] || v}</button>`).join("");
+    $(id).addEventListener("click", (e) => {
+      const v = e.target.closest("button")?.dataset.v; if (v == null) return;
+      cfg[key] = key === "shadow" ? { auto: undefined, on: true, off: false }[v] : v;
+      preset = null; apply();
+      if (key === "from" || key === "ease") { big.clear(); setTimeout(() => big.show(current), 650); }
+    });
+  }
+  segment("look", CubeIcons.LOOKS, "look");
+  segment("bg", Object.keys(BG), "bg");
+  segment("shadow", ["auto", "on", "off"], "shadow");
+  segment("view", ["front", "iso"], "view", { iso: "isometric" });
+  segment("from", ["auto", "below", "above", "left", "right", "center"], "from");
+  segment("ease", CubeIcons.EASES, "ease");
+
+  $("presets").innerHTML = Object.keys(PRESETS).map((p) => `<button type="button" data-p="${p}">${p}</button>`).join("");
+  $("presets").addEventListener("click", (e) => {
+    const p = e.target.dataset.p; if (!p) return;
+    cfg = { ...BASE, ...PRESETS[p] }; preset = p; apply();
+    big.clear(); setTimeout(() => big.show(current), 450);
+  });
+
+  // sliders: [id, key, to value, to label]
+  const SLIDERS = [
+    ["depth", "depth", (v) => +v, (v) => `${v} cubes`, (v) => v],
+    ["gap", "gap", (v) => v / 100, (v) => v.toFixed(2), (v) => Math.round(v * 100)],
+    ["duration", "duration", (v) => +v, (v) => `${v} ms`, (v) => v],
+    ["stagger", "stagger", (v) => +v, (v) => `${v} ms`, (v) => v],
+    ["spin", "spin", (v) => v / 100, (v) => (v ? `${v.toFixed(2)} turns` : "off"), (v) => Math.round(v * 100)],
+    ["magnet", "magnet", (v) => v / 10, (v) => (v ? `${v.toFixed(1)} cubes` : "off"), (v) => Math.round(v * 10)],
+    ["glow", "glow", (v) => v / 100, (v) => (v ? v.toFixed(2) : "off"), (v) => Math.round(v * 100)],
+    ["float", "float", (v) => v / 100, (v) => (v ? v.toFixed(2) : "off"), (v) => Math.round(v * 100)],
+  ];
+  SLIDERS.forEach(([id, key, toValue]) => $(id).addEventListener("input", (e) => { cfg[key] = toValue(e.target.value); preset = null; apply(); }));
+
+  $("full").addEventListener("click", () => { cfg.tint = null; preset = null; apply(); });
+  $("tint").addEventListener("input", (e) => { cfg.tint = e.target.value; preset = null; apply(); });
+  $("tilt").addEventListener("click", () => { cfg.tilt = !cfg.tilt; preset = null; apply(); });
+  $("clear").addEventListener("click", () => big.clear());
+  $("boom").addEventListener("click", () => big.explode());
+  $("big").addEventListener("click", (e) => big.explode(e.clientX, e.clientY));
+  $("reset").addEventListener("click", () => { cfg = { ...BASE }; preset = "Original"; apply(); });
+  $("copy").addEventListener("click", async (e) => {
+    try { await navigator.clipboard.writeText($("code").textContent); e.target.textContent = "Copied"; setTimeout(() => (e.target.textContent = "Copy code"), 1200); }
+    catch { getSelection().selectAllChildren($("code")); }
+  });
+
+  // the panel shows what cfg holds
+  function sync() {
+    const press = (id, v) => $(id).querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.v === v || b.dataset.p === v));
+    press("look", cfg.look); press("bg", cfg.bg); press("view", cfg.view); press("from", cfg.from); press("ease", cfg.ease); press("presets", preset);
+    press("shadow", cfg.shadow === undefined ? "auto" : cfg.shadow ? "on" : "off");
+    SLIDERS.forEach(([id, key, , label, toInput]) => { $(id).value = toInput(cfg[key]); $(`${id}V`).textContent = label(cfg[key]); });
+    $("full").setAttribute("aria-pressed", !cfg.tint);
+    if (cfg.tint) $("tint").value = cfg.tint;
+    $("tilt").setAttribute("aria-pressed", cfg.tilt);
+  }
+
+  // only the settings that differ from the engine's defaults, so the snippet stays short
+  function writeCode() {
+    const D = CubeIcons.DEFAULTS;
+    const lines = Object.entries(stageOptions()).filter(([k, v]) => v !== undefined && v !== D[k]).map(([k, v]) => `  ${k}: ${JSON.stringify(v)},`);
+    $("code").textContent = `const stage = CubeIcons.stage(canvas${lines.length ? `, {\n${lines.join("\n")}\n}` : ""});\nstage.show("${current}");`
+      + (cfg.bg !== "dark" ? `\n// page background: ${BG[cfg.bg]}` : "");
+  }
+
+  // thumbnails, redrawn at most once a frame while a slider moves
+  const names = Object.keys(CUBE_ICONS), grid = $("grid");
+  let pinned = names[0], stillsQueued = false;
+  names.forEach((n) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "tile"; b.dataset.n = n;
+    b.innerHTML = `<canvas></canvas><span class="label">${n}</span>`;
+    grid.append(b);
+    b.addEventListener("pointerenter", () => show(n));
+    b.addEventListener("focus", () => show(n));
+    b.addEventListener("click", () => { pinned = n; markPinned(); });
+  });
+  grid.addEventListener("pointerleave", () => show(pinned));
+  const markPinned = () => grid.querySelectorAll(".tile").forEach((t) => t.setAttribute("aria-pressed", t.dataset.n === pinned));
+  function redrawStills() {
+    if (stillsQueued) return;
+    stillsQueued = true;
+    requestAnimationFrame(() => { stillsQueued = false; const o = stageOptions(); grid.querySelectorAll(".tile").forEach((t) => CubeIcons.still(t.querySelector("canvas"), t.dataset.n, o)); });
+  }
+  function show(n) { current = n; big.show(n); $("name").textContent = n; writeCode(); }
+
+  // in use: each demo runs by itself
+  (() => {
+    const pad = (n) => String(n).padStart(2, "0");
+    const clock = CubeIcons.stage($("useClock"), { tilt: false, duration: 500, stagger: 60, spin: 0.1 });
+    const tick = () => { const d = new Date(); clock.show(CubeIcons.text(pad(d.getHours()) + (d.getSeconds() % 2 ? " " : ":") + pad(d.getMinutes()), { color: "C" })); };
+    tick(); setInterval(tick, 1000);
+    CubeIcons.sequence(CubeIcons.stage($("useWx"), { look: "soft", tilt: false }), ["sun", "cloud", "umbrella", "moon"], { every: 2200 });
+    CubeIcons.sequence(CubeIcons.stage($("useText"), { tilt: false, stagger: 140 }), [CubeIcons.text("Hi", { color: "R" }), CubeIcons.text("Cubes", { color: "B" }), CubeIcons.text("Wow!", { color: "G" })], { every: 2400 });
+    const looks = CubeIcons.stage($("useLooks"), { tilt: false }); let li = 0;
+    looks.show("trophy"); setInterval(() => looks.set({ look: CubeIcons.LOOKS[(li = (li + 1) % CubeIcons.LOOKS.length)] }), 1600);
+    const star = CubeIcons.stage($("useStar"), { look: "soft", tilt: false, tint: "#9a948a", duration: 450 }); let lit = false;
+    star.show("star"); setInterval(() => { lit = !lit; star.set({ tint: lit ? null : "#9a948a" }); if (lit) star.explode(null, null, 1.2); }, 1500);
+    const load = CubeIcons.stage($("useLoad"), { tilt: false }); let t0 = performance.now();
+    const run = (now) => { const p = (now - t0) / 2400; if (p <= 1) load.build("rocket", p); else if (p > 1.25 && p < 1.3) load.show("check"); else if (p > 2) { load.clear(); t0 = now + 600; } requestAnimationFrame(run); };
+    requestAnimationFrame(run);
+  })();
+
+  // a menu: nothing until hover
+  const MENU = [["01", "Work", "briefcase"], ["02", "About", "person"], ["03", "Apps", "phone"], ["04", "Templates", "browser"], ["05", "Contact", "envelope"]];
+  const menu = $("menu");
+  MENU.forEach(([n, t, icon]) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<button type="button"><span>[${n}]</span>${t}</button>`;
+    const b = li.firstChild;
+    b.addEventListener("pointerenter", () => { menu.classList.add("dim"); menuStage.show(icon); });
+    b.addEventListener("focus", () => { menu.classList.add("dim"); menuStage.show(icon); });
+    menu.append(li);
+  });
+  menu.addEventListener("pointerleave", () => { menu.classList.remove("dim"); menuStage.clear(); });
+
+  // scroll assembly: one stage per beat, bound to the scroll in the chosen mode
+  let bound = [];
+  function bindScroll(mode) {
+    bound.forEach((b) => b.destroy());
+    beats.forEach((b) => b.stage.clear());
+    bound = beats.map((b) => CubeIcons.scroll(b.stage, b.icon, { mode }));
+  }
+  const scrollMode = $("scrollMode");
+  scrollMode.addEventListener("click", (e) => { const m = e.target.dataset.m; if (!m) return; scrollMode.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.m === m)); bindScroll(m); });
+
+  markPinned(); show(pinned); apply(); bindScroll("scrub");
+</script>
+</body>
+</html>

@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cube Icon Recipes</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+  :root { --ink: #0e0e10; --panel: #151518; --panel2: #1b1b1f; --paper: #f1efea; --mute: #8a877f; --line: #2a2a2e; --accent: #2f3cff; --soft: #8d97ff; --cream: #efe9df; color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ink); color: var(--paper); font: 15px/1.5 "Bricolage Grotesque", system-ui, sans-serif; padding: 24px max(16px, 3vw) 60px; }
+  .label { font: 500 11px/1.3 "Geist Mono", ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; }
+  h1 { margin: 6px 0 4px; font-size: clamp(30px, 4vw, 48px); line-height: 1; letter-spacing: -0.03em; font-weight: 500; }
+  h2 { margin: 0 0 4px; font-size: 21px; letter-spacing: -0.02em; font-weight: 500; }
+  p { color: var(--mute); max-width: 64ch; margin: 0; }
+  a { color: var(--soft); }
+  code { font: 12px "Geist Mono", monospace; color: var(--soft); }
+  .filters { display: flex; gap: 6px; flex-wrap: wrap; margin: 22px 0 0; position: sticky; top: 0; z-index: 3; padding: 10px 0; background: var(--ink); }
+  .cards { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(min(360px, 100%), 1fr)); grid-auto-flow: dense; margin-top: 8px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 12px; align-content: start; min-width: 0; scroll-margin-top: 70px; }
+  .card.wide { grid-column: 1 / -1; }
+  .card[hidden] { display: none; }
+  .head { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+  .tag { font: 500 10px "Geist Mono", monospace; letter-spacing: .06em; text-transform: uppercase; color: var(--mute); border: 1px solid var(--line); border-radius: 999px; padding: 3px 8px; white-space: nowrap; }
+  .demo { background: var(--ink); border: 1px solid var(--line); border-radius: 10px; min-height: 240px; position: relative; overflow: hidden; }
+  .demo.light { background: var(--cream); color: #1d1b18; border-color: #d8cfc0; }
+  .demo.light p { color: #6c655a; }
+  .demo > canvas { width: 100%; height: 240px; display: block; }
+  .center { display: grid; place-items: center; text-align: center; gap: 6px; padding: 16px; }
+  pre { margin: 0; padding: 12px; padding-right: 64px; background: var(--ink); border: 1px solid var(--line); border-radius: 8px; overflow-x: auto; font: 12px/1.5 "Geist Mono", monospace; color: #c9cbe0; }
+  button, .seg button { font: 500 11px/1 "Geist Mono", monospace; letter-spacing: 0.06em; text-transform: uppercase; color: var(--paper); background: none; border: 1px solid var(--line); padding: 10px 12px; cursor: pointer; border-radius: 6px; }
+  button[aria-pressed="true"] { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+  button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--soft); outline-offset: 2px; }
+  .seg { display: flex; gap: 6px; flex-wrap: wrap; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  input[type="text"], input[type="email"] { background: var(--ink); color: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 9px 10px; font: 13px "Geist Mono", monospace; width: 200px; }
+  input[type="range"] { accent-color: var(--accent); width: 160px; }
+  input[type="color"] { width: 40px; height: 34px; border: 1px solid var(--line); border-radius: 6px; background: none; padding: 2px; }
+
+  /* menu */
+  .menuDemo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; align-items: center; padding: 8px 18px; }
+  @media (max-width: 640px) { .menuDemo { grid-template-columns: minmax(0, 1fr); } }
+  .menuDemo ul { list-style: none; margin: 0; padding: 0; }
+  .menuDemo li + li { border-top: 1px solid var(--line); }
+  .menuDemo a { display: block; padding: 6px 0; font-size: clamp(28px, 4vw, 44px); letter-spacing: -0.04em; color: var(--paper); text-decoration: none; transition: opacity .2s; }
+  .menuDemo ul:hover a:not(:hover) { opacity: .3; }
+  .menuDemo canvas { width: 100%; height: 260px; display: block; }
+  /* buttons */
+  .btnDemo { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; justify-content: center; min-height: 240px; padding: 18px; }
+  .cubeBtn { display: inline-flex; align-items: center; gap: 2px; padding: 4px 18px 4px 6px; border-radius: 999px; background: #fff; color: #1d1b18; border: 1px solid #ddd3c4; font: 500 15px "Bricolage Grotesque", sans-serif; letter-spacing: 0; text-transform: none; box-shadow: 0 1px 0 rgba(0,0,0,.04), 0 6px 18px rgba(60,40,10,.08); transition: transform .25s, box-shadow .25s; }
+  .cubeBtn:hover { transform: translateY(-2px); box-shadow: 0 1px 0 rgba(0,0,0,.04), 0 12px 26px rgba(60,40,10,.14); }
+  .cubeBtn.dark { background: #1d1b18; color: #fff; border-color: #1d1b18; }
+  .cubeBtn canvas { width: 48px; height: 42px; display: block; }
+  /* tabs */
+  .tabs { display: flex; gap: 4px; padding: 4px; background: #e4dccf; border-radius: 999px; width: max-content; max-width: 100%; margin: 0 auto; }
+  .tabs button { border: 0; border-radius: 999px; color: #6c655a; padding: 9px 14px; }
+  .tabs button[aria-selected="true"] { background: #fff; color: #1d1b18; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+  /* bell */
+  .bellWrap { position: relative; width: 150px; height: 140px; }
+  .bellWrap canvas { width: 150px; height: 140px; display: block; }
+  .badge { position: absolute; top: 18px; right: 26px; min-width: 24px; height: 24px; border-radius: 12px; background: #d6303a; color: #fff; font: 600 12px "Geist Mono", monospace; display: grid; place-items: center; padding: 0 6px; transform: scale(0); transition: transform .35s cubic-bezier(.3, 1.6, .5, 1); }
+  .badge.on { transform: scale(1); }
+  /* rating */
+  .stars { display: flex; gap: 2px; justify-content: center; }
+  .stars canvas { width: 56px; height: 54px; display: block; cursor: pointer; }
+  /* drop zone */
+  .dropzone { margin: 14px; border: 2px dashed #3a3a42; border-radius: 12px; min-height: 210px; display: grid; place-items: center; text-align: center; transition: border-color .2s, background .2s; cursor: pointer; }
+  .dropzone.over { border-color: var(--soft); background: rgba(141, 151, 255, 0.06); }
+  .dropzone canvas { width: 180px; height: 130px; display: block; margin: 0 auto; }
+  /* steps */
+  .dots { display: flex; gap: 6px; justify-content: center; }
+  .dots i { width: 8px; height: 8px; border-radius: 50%; background: #d6cdbf; transition: background .3s, width .3s; }
+  .dots i.on { background: #1d1b18; width: 22px; border-radius: 4px; }
+  /* hero */
+  .heroDemo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 10px; padding: 18px 26px; }
+  @media (max-width: 640px) { .heroDemo { grid-template-columns: minmax(0, 1fr); } }
+  .heroDemo h3 { font-size: clamp(30px, 4.4vw, 52px); line-height: .95; letter-spacing: -.045em; margin: 8px 0 10px; font-weight: 500; }
+  .heroDemo canvas { width: 100%; height: 300px; display: block; }
+  .pill { display: inline-block; background: #1d1b18; color: #fff; padding: 11px 16px; border-radius: 999px; font-size: 14px; margin-top: 14px; }
+  /* avatar */
+  .avatar { width: 150px; height: 150px; border-radius: 50%; overflow: hidden; margin: 0 auto; transition: background .4s; }
+  .avatar canvas { width: 150px; height: 150px; display: block; }
+  /* reading progress */
+  .reading { display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 10px; padding: 12px 18px; }
+  .reading canvas { width: 150px; height: 150px; display: block; }
+  /* theme */
+  .themeDemo { transition: background .45s, color .45s; }
+  .themeDemo.night { background: #101018; color: #f1efea; border-color: #2a2a35; }
+  .themeDemo.night p { color: #8f8b9e; }
+  .switch { display: inline-flex; align-items: center; gap: 4px; padding: 4px 16px 4px 4px; border-radius: 999px; background: #fff; border: 1px solid #ddd3c4; color: #1d1b18; font: 500 14px "Bricolage Grotesque"; text-transform: none; letter-spacing: 0; }
+  .themeDemo.night .switch { background: #1d1d28; border-color: #33334a; color: #f1efea; }
+  .switch canvas { width: 46px; height: 42px; display: block; }
+  /* feature cards */
+  .features { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 12px; }
+  @media (max-width: 640px) { .features { grid-template-columns: minmax(0, 1fr); } }
+  .feature { background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px 14px; transition: border-color .2s; }
+  .feature:hover, .feature:focus-within { border-color: var(--soft); }
+  .feature canvas { width: 100%; height: 190px; display: block; }
+  .feature b { font-weight: 500; font-size: 18px; }
+  /* looks gallery */
+  .lookGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; padding: 12px; }
+  .lookGrid div { border-radius: 10px; padding: 4px 4px 8px; text-align: center; cursor: pointer; }
+  .lookGrid div.lightbg { background: var(--cream); color: #6c655a; }
+  .lookGrid div.darkbg { background: #08080b; color: #8a877f; border: 1px solid var(--line); }
+  .lookGrid canvas { width: 100%; height: 110px; display: block; }
+  .bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+  /* menu reveal */
+  .reveal { background: #0b2414; border-color: #16402a; min-height: 440px; color: #f1efea; }
+  .reveal .top { position: absolute; left: 22px; right: 16px; top: 14px; display: flex; justify-content: space-between; align-items: center; z-index: 4; }
+  .reveal .top b { font: 500 12px "Geist Mono", monospace; letter-spacing: .3em; }
+  .rvBtn { background: #3cff3c; color: #0b2414; border: 0; font-weight: 700; padding: 12px 14px; border-radius: 4px; }
+  .rvBtn:hover { background: #7cff7c; }
+  .reveal h3 { position: absolute; left: 22px; top: 70px; margin: 0; font: 700 clamp(34px, 6vw, 76px)/.92 "Bricolage Grotesque", sans-serif; letter-spacing: -.04em; z-index: 1; transition: filter .5s, opacity .5s; }
+  .reveal h3 i { color: #3cff3c; font-weight: 500; }
+  .reveal.open h3 { filter: blur(8px); opacity: .35; }
+  .reveal canvas.hero { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+  .rvMenu { position: absolute; inset: 0; z-index: 3; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; padding: 70px 22px 22px; background: rgba(11, 36, 20, .55); opacity: 0; pointer-events: none; transition: opacity .45s; }
+  .reveal.open .rvMenu { opacity: 1; pointer-events: auto; }
+  .rvMenu ul { list-style: none; margin: 0; padding: 0; }
+  .rvMenu a { display: block; color: #f1efea; text-decoration: none; font: 700 clamp(28px, 4.4vw, 52px)/1.05 "Bricolage Grotesque", sans-serif; letter-spacing: -.035em; text-transform: uppercase; transition: color .2s; }
+  .rvMenu a:hover, .rvMenu a:focus-visible, .rvMenu a.on { color: #3cff3c; font-style: italic; font-weight: 500; text-transform: none; }
+  .rvMenu canvas { width: 100%; height: 340px; display: block; }
+  @media (max-width: 640px) { .rvMenu { grid-template-columns: minmax(0, 1fr); } .rvMenu canvas { height: 200px; } }
+  .bar i { display: block; height: 100%; width: 0; background: var(--soft); }
+</style>
+</head>
+<body>
+  <h1>Recipes</h1>
+  <p>Twenty-eight ways to put cube icons on a page, each with the code that makes it. Every one needs only <code>icons.js</code> and <code>cubes.js</code> (see <a href="docs.html#install">installation</a>), plus the lines under it.</p>
+
+  <div class="filters seg" id="filters"></div>
+  <div class="cards" id="cards">
+
+    <!-- ===== navigation ===== -->
+    <article class="card wide" id="menu" data-cat="Navigation">
+      <div class="head"><h2>Menu hover</h2><span class="tag">Navigation</span></div>
+      <p>Nothing until you point at a link; each one builds its own object, rising from below.</p>
+      <div class="demo menuDemo">
+        <ul id="menuList">
+          <li><a href="#" data-icon="home">Home</a></li>
+          <li><a href="#" data-icon="briefcase">Work</a></li>
+          <li><a href="#" data-icon="bag">Shop</a></li>
+          <li><a href="#" data-icon="envelope">Contact</a></li>
+        </ul>
+        <canvas id="menuCv" aria-hidden="true"></canvas>
+      </div>
+      <pre data-copy>const stage = CubeIcons.stage(canvas, { from: "below" });
+link.addEventListener("pointerenter", () => stage.show(link.dataset.icon));
+list.addEventListener("pointerleave", () => stage.clear());</pre>
+    </article>
+
+    <article class="card" id="buttons" data-cat="Navigation">
+      <div class="head"><h2>Button icons</h2><span class="tag">Navigation</span></div>
+      <p>Small icons that move with intent: the heart pops and springs back; the arrows nudge while you hover.</p>
+      <div class="demo light btnDemo">
+        <button class="cubeBtn" type="button" id="btnLike"><canvas aria-hidden="true"></canvas>Like</button>
+        <button class="cubeBtn" type="button" id="btnDown"><canvas aria-hidden="true"></canvas>Download</button>
+        <button class="cubeBtn dark" type="button" id="btnNext"><canvas aria-hidden="true"></canvas>Next</button>
+      </div>
+      <pre data-copy>const heart = CubeIcons.stage(canvas, { look: "soft", tilt: false, duration: 900, ease: "elastic" });
+heart.show(HEART);
+btn.addEventListener("pointerenter", () => heart.explode(null, null, 1.6));
+
+// a nudge: flip between two frames while hovered
+let t; const frames = [ARROW_UP, ARROW_DOWN];
+btn.addEventListener("pointerenter", () => { let i = 0; t = setInterval(() => arrow.show(frames[++i % 2]), 420); });
+btn.addEventListener("pointerleave", () => { clearInterval(t); arrow.show(frames[0]); });</pre>
+    </article>
+
+    <article class="card" id="tabs" data-cat="Navigation">
+      <div class="head"><h2>Tabs</h2><span class="tag">Navigation</span></div>
+      <p>One stage morphs between tabs: the cubes fly from one icon straight into the next.</p>
+      <div class="demo light" style="padding:16px 0 0"><div class="tabs" role="tablist" id="tabList"><button role="tab" aria-selected="true" data-icon="pencil">Design</button><button role="tab" aria-selected="false" data-icon="code">Build</button><button role="tab" aria-selected="false" data-icon="rocket">Ship</button></div><canvas id="tabCv" style="width:100%;height:200px;display:block" aria-hidden="true"></canvas></div>
+      <pre data-copy>tab.addEventListener("click", () => stage.show(tab.dataset.icon));</pre>
+    </article>
+
+    <article class="card wide" id="features" data-cat="Navigation">
+      <div class="head"><h2>Feature cards</h2><span class="tag">Navigation</span></div>
+      <p>One stage per card, isometric and soft, built while you hover or focus the card.</p>
+      <div class="demo features">
+        <div class="feature" tabindex="0" data-icon="rocket"><canvas aria-hidden="true"></canvas><b>Fast</b><p>Ships in a day, not a sprint.</p></div>
+        <div class="feature" tabindex="0" data-icon="lock"><canvas aria-hidden="true"></canvas><b>Private</b><p>Your files stay yours.</p></div>
+        <div class="feature" tabindex="0" data-icon="globe"><canvas aria-hidden="true"></canvas><b>Everywhere</b><p>Works in any browser.</p></div>
+      </div>
+      <pre data-copy>const s = CubeIcons.stage(canvas, { view: "iso", look: "soft", depth: 1, tilt: false });
+card.addEventListener("pointerenter", () => s.show("rocket"));
+card.addEventListener("pointerleave", () => s.clear());</pre>
+    </article>
+
+    <!-- ===== feedback ===== -->
+    <article class="card" id="loading" data-cat="Feedback">
+      <div class="head"><h2>Loading</h2><span class="tag">Feedback</span></div>
+      <p>Progress drives the build, bottom row first; at 100% it turns into a tick.</p>
+      <div class="demo"><canvas id="loadCv" aria-hidden="true"></canvas></div>
+      <div class="row"><button type="button" id="loadGo">Upload a file</button><div class="bar" style="flex:1;min-width:120px"><i id="loadBar"></i></div><span class="label" id="loadPct">0%</span></div>
+      <pre data-copy>stage.build("rocket", progress);   // 0–1, as progress comes in
+if (progress === 1) stage.show("check");</pre>
+    </article>
+
+    <article class="card" id="form" data-cat="Feedback">
+      <div class="head"><h2>Form result</h2><span class="tag">Feedback</span></div>
+      <p>A tick when it worked, a cross when it didn't. Try an address without an @.</p>
+      <div class="demo center" style="gap:10px"><canvas id="formCv" style="width:200px;height:130px;display:block" aria-hidden="true"></canvas><form class="row" id="formEl" novalidate><input type="email" id="formIn" placeholder="you@studio.com" aria-label="Email"><button type="submit">Subscribe</button></form><p id="formMsg" aria-live="polite">&nbsp;</p></div>
+      <pre data-copy>form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  stage.show(input.value.includes("@") ? "check" : "close");
+});</pre>
+    </article>
+
+    <article class="card" id="bell" data-cat="Feedback">
+      <div class="head"><h2>Notification bell</h2><span class="tag">Feedback</span></div>
+      <p>New message: the bell's cubes jolt and spring back, and the count goes up.</p>
+      <div class="demo center"><div class="bellWrap"><canvas id="bellCv" aria-hidden="true"></canvas><span class="badge" id="bellBadge">0</span></div><button type="button" id="bellGo">Send a notification</button></div>
+      <pre data-copy>const bell = CubeIcons.stage(canvas, { duration: 800, ease: "elastic", tilt: false });
+bell.show("bell");
+function notify() { bell.explode(null, null, 1.3); badge.textContent = ++count; }</pre>
+    </article>
+
+    <article class="card" id="rating" data-cat="Feedback">
+      <div class="head"><h2>Star rating</h2><span class="tag">Feedback</span></div>
+      <p>Five tiny stages. Unlit stars are tinted grey; as you hover, their cubes blend to gold.</p>
+      <div class="demo light center"><div class="stars" id="stars" role="radiogroup" aria-label="Rating"></div><p id="rateMsg">Rate your visit</p></div>
+      <pre data-copy>stars.forEach((s, i) => s.set({ tint: i < rating ? null : "#9a948a" }));</pre>
+    </article>
+
+    <article class="card" id="drop" data-cat="Feedback">
+      <div class="head"><h2>Drop zone</h2><span class="tag">Feedback</span></div>
+      <p>Drag a file over it (or click): a folder builds to catch it, then a tick.</p>
+      <div class="demo"><div class="dropzone" id="dropZone" tabindex="0" role="button" aria-label="Drop a file here"><div><canvas id="dropCv" aria-hidden="true"></canvas><p id="dropMsg">Drop a file here</p></div></div></div>
+      <pre data-copy>zone.addEventListener("dragenter", () => stage.show("folder"));
+zone.addEventListener("dragleave", () => stage.clear());
+zone.addEventListener("drop", () => stage.show("check"));</pre>
+    </article>
+
+    <article class="card" id="empty" data-cat="Feedback">
+      <div class="head"><h2>Empty state</h2><span class="tag">Feedback</span></div>
+      <p>Builds once it's half in view. The button replays it.</p>
+      <div class="demo center">
+        <canvas id="emptyCv" style="width:100%;height:160px;display:block" aria-hidden="true"></canvas>
+        <b style="font-weight:500;font-size:19px">Nothing here yet</b>
+        <p>Your saved items will show up here.</p>
+        <button type="button" id="emptyAgain" style="margin-top:6px">Look again</button>
+      </div>
+      <pre data-copy>CubeIcons.scroll(stage, "ghost", { mode: "trigger" });</pre>
+    </article>
+
+    <article class="card" id="steps" data-cat="Feedback">
+      <div class="head"><h2>Onboarding steps</h2><span class="tag">Feedback</span></div>
+      <p>Each step morphs into the next, flying in from the side you're heading.</p>
+      <div class="demo light center"><canvas id="stepCv" style="width:100%;height:150px;display:block" aria-hidden="true"></canvas><b id="stepTitle" style="font-weight:500;font-size:19px">Make your profile</b><div class="dots" id="stepDots"><i class="on"></i><i></i><i></i></div><div class="row" style="justify-content:center"><button type="button" id="stepBack" style="color:#1d1b18;border-color:#d6cdbf">Back</button><button type="button" id="stepNext" style="background:#1d1b18;border-color:#1d1b18">Next</button></div></div>
+      <pre data-copy>stage.show(steps[i].icon);   // the same cubes re-form for each step</pre>
+    </article>
+
+    <!-- ===== content ===== -->
+    <article class="card wide" id="hero" data-cat="Content">
+      <div class="head"><h2>Hero</h2><span class="tag">Content</span></div>
+      <p>A headline with an object that keeps changing. Soft look on a warm page.</p>
+      <div class="demo light heroDemo"><div><p class="label" style="margin:0">New · Version 2</p><h3>Small ideas, built to be noticed.</h3><p>Cubes, a little light, and a lot of motion.</p><span class="pill">Get started</span></div><canvas id="heroCv" aria-hidden="true"></canvas></div>
+      <pre data-copy>CubeIcons.sequence(CubeIcons.stage(canvas, { look: "soft", gap: 0.05 }), ["rocket", "bulb", "trophy"], { every: 2600 });</pre>
+    </article>
+
+    <article class="card wide" id="text" data-cat="Content">
+      <div class="head"><h2>Text in cubes</h2><span class="tag">Content</span></div>
+      <p>A built-in 5-row pixel font: A–Z, 0–9 and a little punctuation.</p>
+      <div class="demo"><canvas id="textCv" aria-hidden="true"></canvas></div>
+      <div class="row"><input type="text" id="textIn" value="Hello" maxlength="14" aria-label="Text to build"><div class="seg" id="textCol"><button type="button" data-c="B" aria-pressed="true">Cobalt</button><button type="button" data-c="R">Red</button><button type="button" data-c="G">Green</button><button type="button" data-c="Y">Yellow</button></div></div>
+      <pre data-copy>stage.show(CubeIcons.text("Hello", { color: "B" }));</pre>
+    </article>
+
+    <article class="card" id="clock" data-cat="Content">
+      <div class="head"><h2>Live clock</h2><span class="tag">Content</span></div>
+      <p>The time in cubes. Each second the colon blinks and changed digits re-form.</p>
+      <div class="demo"><canvas id="clockCv" aria-label="The current time"></canvas></div>
+      <pre data-copy>setInterval(() => {
+  const d = new Date(), pad = (n) => String(n).padStart(2, "0");
+  stage.show(CubeIcons.text(pad(d.getHours()) + (d.getSeconds() % 2 ? " " : ":") + pad(d.getMinutes()), { color: "C" }));
+}, 1000);</pre>
+    </article>
+
+    <article class="card" id="countdown" data-cat="Content">
+      <div class="head"><h2>Countdown</h2><span class="tag">Content</span></div>
+      <p>3, 2, 1, launch. Each number flies in from below.</p>
+      <div class="demo"><canvas id="countCv" aria-hidden="true"></canvas></div>
+      <div class="row"><button type="button" id="countGo">Start</button></div>
+      <pre data-copy>for (const n of ["3", "2", "1"]) { stage.show(CubeIcons.text(n, { color: "O" })); await wait(900); }
+stage.show("rocket");</pre>
+    </article>
+
+    <article class="card" id="weather" data-cat="Content">
+      <div class="head"><h2>Weather</h2><span class="tag">Content</span></div>
+      <p>Pick the weather: the same cubes re-form and their colours blend.</p>
+      <div class="demo"><canvas id="wxCv" aria-hidden="true"></canvas></div>
+      <div class="seg" id="wxSeg"><button type="button" data-icon="sun" aria-pressed="true">Sunny</button><button type="button" data-icon="cloud">Cloudy</button><button type="button" data-icon="umbrella">Rainy</button><button type="button" data-icon="moon">Night</button></div>
+      <pre data-copy>stage.show(forecast.icon);   // sun · cloud · umbrella · moon</pre>
+    </article>
+
+    <article class="card" id="avatar" data-cat="Content">
+      <div class="head"><h2>Initials avatar</h2><span class="tag">Content</span></div>
+      <p>Initials in cubes on a colour picked from the name.</p>
+      <div class="demo center"><div class="avatar" id="avBox"><canvas id="avCv" aria-hidden="true"></canvas></div><input type="text" id="avIn" value="Maya Lin" maxlength="30" aria-label="Name"></div>
+      <pre data-copy>const initials = name.split(" ").map((w) => w[0]).join("").slice(0, 2);
+stage.show(CubeIcons.text(initials, { color: "W" }));</pre>
+    </article>
+
+    <article class="card" id="reading" data-cat="Content">
+      <div class="head"><h2>Reading progress</h2><span class="tag">Content</span></div>
+      <p>Scroll this page: the trophy builds as you get closer to the bottom.</p>
+      <div class="demo reading"><canvas id="readCv" aria-hidden="true"></canvas><div><b id="readPct" style="font-weight:500;font-size:28px">0%</b><p>of this page read</p></div></div>
+      <pre data-copy>addEventListener("scroll", () => {
+  const p = scrollY / (document.documentElement.scrollHeight - innerHeight);
+  stage.build("trophy", p);
+});</pre>
+    </article>
+
+    <!-- ===== interaction ===== -->
+    <article class="card wide" id="reveal" data-cat="Interaction">
+      <div class="head"><h2>Menu reveal</h2><span class="tag">Interaction</span></div>
+      <p>Open the menu: the hero object bursts toward you, the page blurs, and the cubes gather beside the links. Hover a link and they take its shape. Glow and float keep it alive.</p>
+      <div class="demo reveal" id="rv">
+        <div class="top"><b>STUDIO</b><button type="button" class="rvBtn" id="rvBtn" aria-expanded="false" aria-controls="rvMenu">Menu</button></div>
+        <h3>Let's make<br>something <i>bright</i></h3>
+        <canvas class="hero" id="rvHeroCv" aria-hidden="true"></canvas>
+        <nav class="rvMenu" id="rvMenu" aria-label="Demo menu">
+          <ul><li><a href="#" data-icon="rocket">Home</a></li><li><a href="#" data-icon="bolt">Work</a></li><li><a href="#" data-icon="sword">Studio</a></li><li><a href="#" data-icon="envelope">Contact</a></li></ul>
+          <canvas id="rvMenuCv" aria-hidden="true"></canvas>
+        </nav>
+      </div>
+      <pre data-copy>const look = { look: "soft", tint: "#3cff3c", glow: 0.8, float: 0.6, gap: 0.04 };
+const hero = CubeIcons.stage(heroCanvas, { ...look, x: 0.72 });
+const menu = CubeIcons.stage(menuCanvas, look);
+hero.show("rocket");
+
+button.addEventListener("click", () => {
+  hero.burst();                                   // the object rushes at you and fades
+  page.classList.add("open");                     // blur the page, fade the menu in (CSS)
+  menu.scatter(90, { icon: "rocket" });           // loose cubes...
+  setTimeout(() => menu.show("rocket"), 350);     // ...gather into the object
+});
+link.addEventListener("pointerenter", () => menu.show(link.dataset.icon));</pre>
+    </article>
+
+    <article class="card wide" id="floating" data-cat="Interaction">
+      <div class="head"><h2>Floating cubes</h2><span class="tag">Interaction</span></div>
+      <p>Loose, glowing cubes drift across a section. Assemble gathers them into an icon, which keeps floating; Scatter lets them go again.</p>
+      <div class="demo" style="background:#0b2414;border-color:#16402a"><canvas id="flCv" style="width:100%;height:320px;display:block" aria-label="Floating cubes"></canvas></div>
+      <div class="row"><button type="button" id="flGo">Assemble</button><button type="button" id="flScatter">Scatter</button><div class="seg" id="flIcon"><button type="button" data-icon="bolt" aria-pressed="true">Bolt</button><button type="button" data-icon="heart">Heart</button><button type="button" data-icon="sword">Sword</button><button type="button" data-icon="planet">Planet</button></div></div>
+      <pre data-copy>const stage = CubeIcons.stage(canvas, { look: "soft", tint: "#3cff3c", glow: 0.8, float: 0.7 });
+stage.scatter(140, { icon: "bolt" });          // loose cubes drift across the canvas
+button.onclick = () => stage.show("bolt");      // they gather into the icon, and keep floating</pre>
+    </article>
+
+    <article class="card" id="morph" data-cat="Interaction">
+      <div class="head"><h2>Morph sequence</h2><span class="tag">Interaction</span></div>
+      <p>The same cubes fly from one icon to the next on a timer.</p>
+      <div class="demo"><canvas id="seqCv" aria-hidden="true"></canvas></div>
+      <pre data-copy>CubeIcons.sequence(stage, ["home", "bag", "cart", "gift", "trophy"], { every: 1800 });</pre>
+    </article>
+
+    <article class="card" id="explode" data-cat="Interaction">
+      <div class="head"><h2>Click to explode</h2><span class="tag">Interaction</span></div>
+      <p>Click anywhere on the star. Cubes near the click fly furthest, then settle back.</p>
+      <div class="demo"><canvas id="boomCv" style="cursor:pointer" aria-label="A star; click it to knock the cubes apart"></canvas></div>
+      <pre data-copy>canvas.addEventListener("click", (e) => stage.explode(e.clientX, e.clientY));</pre>
+    </article>
+
+    <article class="card" id="magnet" data-cat="Interaction">
+      <div class="head"><h2>Cursor magnet</h2><span class="tag">Interaction</span></div>
+      <p>Move over the face: the cubes near the pointer pop toward you.</p>
+      <div class="demo"><canvas id="magCv" aria-hidden="true"></canvas></div>
+      <pre data-copy>CubeIcons.stage(canvas, { magnet: 1.6, tilt: false }).show("smile");</pre>
+    </article>
+
+    <article class="card" id="theme" data-cat="Interaction">
+      <div class="head"><h2>Theme toggle</h2><span class="tag">Interaction</span></div>
+      <p>The switch's sun turns into a moon as the card goes dark.</p>
+      <div class="demo light center themeDemo" id="themeBox"><button type="button" class="switch" id="themeBtn" aria-pressed="false"><canvas aria-hidden="true"></canvas><span>Light</span></button><p>Your choice is saved on this device.</p></div>
+      <pre data-copy>toggle.addEventListener("click", () => { dark = !dark; stage.show(dark ? "moon" : "sun"); });</pre>
+    </article>
+
+    <article class="card" id="from" data-cat="Interaction">
+      <div class="head"><h2>Fly-in direction</h2><span class="tag">Interaction</span></div>
+      <p>Where hidden cubes start from. Each cube lines up with the spot it's flying to.</p>
+      <div class="demo"><canvas id="fromCv" aria-hidden="true"></canvas></div>
+      <div class="seg" id="fromSeg"><button type="button" data-f="below" aria-pressed="true">Below</button><button type="button" data-f="above">Above</button><button type="button" data-f="left">Left</button><button type="button" data-f="right">Right</button><button type="button" data-f="center">Center</button></div>
+      <pre data-copy>CubeIcons.stage(canvas, { from: "above" });   // below · above · left · right · center</pre>
+    </article>
+
+    <!-- ===== style ===== -->
+    <article class="card wide" id="looks" data-cat="Style">
+      <div class="head"><h2>Every look</h2><span class="tag">Style</span></div>
+      <p>Eleven looks, one option. Light looks sit on cream, dark ones on black. Click any to replay it.</p>
+      <div class="demo lookGrid" id="lookGrid"></div>
+      <pre data-copy>CubeIcons.stage(canvas, { look: "candy" });   // flat · soft · clay · candy · paper · outline · pixel · glass · neon · wire · holo</pre>
+    </article>
+
+    <article class="card" id="colours" data-cat="Style">
+      <div class="head"><h2>Your colours</h2><span class="tag">Style</span></div>
+      <p>Swap any palette key for your own colour, in hex or rgb.</p>
+      <div class="demo"><canvas id="colCv" aria-hidden="true"></canvas></div>
+      <div class="row"><label class="label" style="display:flex;gap:10px;align-items:center">Bubble <input type="color" id="colIn" value="#2f3cff"></label><label class="label" style="display:flex;gap:10px;align-items:center">Dots <input type="color" id="colIn2" value="#f1efea"></label></div>
+      <pre data-copy>stage.set({ palette: { ...CubeIcons.PALETTE, B: "#ff4d8d" } });</pre>
+    </article>
+
+    <article class="card" id="depth" data-cat="Style">
+      <div class="head"><h2>Depth and view</h2><span class="tag">Style</span></div>
+      <p>How many cubes deep each pixel goes, and which way you look at it. Move the mouse to tilt.</p>
+      <div class="demo"><canvas id="depthCv" aria-hidden="true"></canvas></div>
+      <div class="row"><label class="label" style="display:flex;gap:10px;align-items:center">Depth <input type="range" id="depthIn" min="1" max="5" value="3"></label><div class="seg" id="depthView"><button type="button" data-v="front" aria-pressed="true">Front</button><button type="button" data-v="iso">Iso</button></div></div>
+      <pre data-copy>stage.set({ depth: 4, view: "iso" });</pre>
+    </article>
+  </div>
+
+<script src="icons.js"></script>
+<script src="cubes.js"></script>
+<script src="site.js"></script>
+<script>
+  const $ = (id) => document.getElementById(id);
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  const press = (box, attr, v) => box.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", b.dataset[attr] === v));
+
+  // ---- filters
+  const cats = ["All", ...new Set([...document.querySelectorAll(".card")].map((c) => c.dataset.cat))];
+  $("filters").innerHTML = cats.map((c) => `<button type="button" data-c="${c}" aria-pressed="${c === "All"}">${c} · ${c === "All" ? document.querySelectorAll(".card").length : document.querySelectorAll(`.card[data-cat="${c}"]`).length}</button>`).join("");
+  $("filters").addEventListener("click", (e) => {
+    const c = e.target.dataset.c; if (!c) return;
+    press($("filters"), "c", c);
+    document.querySelectorAll(".card").forEach((card) => (card.hidden = c !== "All" && card.dataset.cat !== c));
+  });
+
+  // ---- menu hover
+  const menuStage = CubeIcons.stage($("menuCv"), { from: "below" });
+  $("menuList").querySelectorAll("a").forEach((a) => {
+    a.addEventListener("click", (e) => e.preventDefault());
+    a.addEventListener("pointerenter", () => menuStage.show(a.dataset.icon));
+    a.addEventListener("focus", () => menuStage.show(a.dataset.icon));
+  });
+  $("menuList").addEventListener("pointerleave", () => menuStage.clear());
+
+  // ---- button icons: small hand-drawn icons read better at button size than the full library ones
+  const HEART = [".RR.RR.", "RRRRRRR", "RRRRRRR", ".RRRRR.", "..RRR..", "...R..."];
+  const DOWN = [["...B...", "...B...", ".BBBBB.", "..BBB..", "...B...", ".......", "K.....K", "KKKKKKK"],
+                [".......", "...B...", "...B...", ".BBBBB.", "..BBB..", "...B...", "K.....K", "KKKKKKK"]];
+  const NEXT1 = ["...W....", "...WW...", "WWWWWW..", "WWWWWWW.", "WWWWWW..", "...WW...", "...W...."];
+  const NEXT = [NEXT1, NEXT1.map((r) => "." + r.slice(0, -1))];
+  const btnStage = (id, opts) => CubeIcons.stage($(id).querySelector("canvas"), { look: "soft", tilt: false, max: 200, depth: 2, shadow: false, ...opts });
+  const like = btnStage("btnLike", { duration: 900, ease: "elastic" });
+  like.show(HEART);
+  ["pointerenter", "focus"].forEach((ev) => $("btnLike").addEventListener(ev, () => like.explode(null, null, 1.6)));
+  function nudge(btnId, frames) {
+    const s = btnStage(btnId, { duration: 380, ease: "cubic", stagger: 0, spin: 0 });
+    let t = 0, i = 0;
+    s.show(frames[0]);
+    const on = () => { clearInterval(t); t = setInterval(() => s.show(frames[++i % 2]), 420); };
+    const off = () => { clearInterval(t); i = 0; s.show(frames[0]); };
+    $(btnId).addEventListener("pointerenter", on); $(btnId).addEventListener("focus", on);
+    $(btnId).addEventListener("pointerleave", off); $(btnId).addEventListener("blur", off);
+  }
+  nudge("btnDown", DOWN); nudge("btnNext", NEXT);
+
+  // ---- tabs
+  const tabStage = CubeIcons.stage($("tabCv"), { look: "soft", tilt: false, stagger: 160 });
+  tabStage.show("pencil");
+  $("tabList").addEventListener("click", (e) => {
+    const t = e.target.closest("[role=tab]"); if (!t) return;
+    $("tabList").querySelectorAll("[role=tab]").forEach((b) => b.setAttribute("aria-selected", b === t));
+    tabStage.show(t.dataset.icon);
+  });
+
+  // ---- feature cards
+  const hover = (el, st, icon) => {
+    const on = () => st.show(icon), off = () => st.clear();
+    el.addEventListener("pointerenter", on); el.addEventListener("focusin", on);
+    el.addEventListener("pointerleave", off); el.addEventListener("focusout", off);
+  };
+  document.querySelectorAll(".feature").forEach((card) => hover(card, CubeIcons.stage(card.querySelector("canvas"), { view: "iso", look: "soft", depth: 1, tilt: false, max: 400 }), card.dataset.icon));
+
+  // ---- loading
+  const loadStage = CubeIcons.stage($("loadCv"), { tilt: false });
+  let loading = 0;
+  $("loadGo").addEventListener("click", () => {
+    cancelAnimationFrame(loading);
+    const t0 = performance.now(), dur = 2600;
+    const step = (t) => {
+      const p = Math.min(1, (t - t0) / dur);
+      $("loadBar").style.width = `${p * 100}%`; $("loadPct").textContent = `${Math.round(p * 100)}%`;
+      if (p < 1) { loadStage.build("rocket", p); loading = requestAnimationFrame(step); }
+      else setTimeout(() => loadStage.show("check"), 350);
+    };
+    loading = requestAnimationFrame(step);
+  });
+  loadStage.build("rocket", 0.3);
+
+  // ---- form result
+  const formStage = CubeIcons.stage($("formCv"), { tilt: false, duration: 600, ease: "back" });
+  formStage.show("envelope");
+  $("formEl").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const ok = /.+@.+\..+/.test($("formIn").value);
+    formStage.show(ok ? "check" : "close");
+    $("formMsg").textContent = ok ? "You're on the list." : "That doesn't look like an email address.";
+  });
+
+  // ---- bell
+  const bell = CubeIcons.stage($("bellCv"), { duration: 800, ease: "elastic", tilt: false });
+  bell.show("bell");
+  let bellCount = 0;
+  $("bellGo").addEventListener("click", () => { bell.explode(null, null, 1.3); $("bellBadge").textContent = ++bellCount; $("bellBadge").classList.add("on"); });
+
+  // ---- star rating
+  const STAR = ["...Y...", "..YYY..", "YYYYYYY", ".YYYYY.", ".YY.YY.", "YY...YY"];
+  let rating = 0;
+  const stars = [];
+  const light = (k) => stars.forEach((st, i) => st.set({ tint: i < k ? null : "#9a948a" }));
+  [1, 2, 3, 4, 5].forEach((n) => {
+    const c = document.createElement("canvas");
+    c.setAttribute("role", "radio"); c.setAttribute("aria-label", `${n} star${n > 1 ? "s" : ""}`); c.tabIndex = 0;
+    $("stars").append(c);
+    const s = CubeIcons.stage(c, { look: "soft", tilt: false, depth: 2, max: 120, tint: "#9a948a", duration: 450, stagger: 80 });
+    s.show(STAR);
+    stars.push(s);
+    c.addEventListener("pointerenter", () => light(n));
+    c.addEventListener("pointerleave", () => light(rating));
+    const pick = () => { rating = n; light(n); s.explode(null, null, 1.2); stars.forEach((_, i) => stars[i] && c.parentNode.children[i].setAttribute("aria-checked", i === n - 1)); $("rateMsg").textContent = ["", "Sorry to hear that", "Thanks, we'll do better", "Thanks!", "Glad you liked it", "Wonderful, thank you!"][n]; };
+    c.addEventListener("click", pick);
+    c.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
+  });
+
+  // ---- drop zone
+  const dropStage = CubeIcons.stage($("dropCv"), { tilt: false, from: "above", duration: 600 });
+  const dz = $("dropZone");
+  let dzDepth = 0;
+  dz.addEventListener("dragenter", (e) => { e.preventDefault(); if (dzDepth++ === 0) { dz.classList.add("over"); dropStage.show("folder"); $("dropMsg").textContent = "Let go to upload"; } });
+  dz.addEventListener("dragover", (e) => e.preventDefault());
+  dz.addEventListener("dragleave", () => { if (--dzDepth === 0) { dz.classList.remove("over"); dropStage.clear(); $("dropMsg").textContent = "Drop a file here"; } });
+  const dropped = (name) => { dzDepth = 0; dz.classList.remove("over"); dropStage.show("check"); $("dropMsg").textContent = name ? `Got ${name}` : "Uploaded"; setTimeout(() => { dropStage.clear(); $("dropMsg").textContent = "Drop a file here"; }, 2600); };
+  dz.addEventListener("drop", (e) => { e.preventDefault(); e.stopPropagation(); dropped(e.dataTransfer.files[0]?.name); });
+  const fakeDrop = async () => { dropStage.show("folder"); $("dropMsg").textContent = "Let go to upload"; await wait(900); dropped(); };
+  dz.addEventListener("click", fakeDrop);
+  dz.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fakeDrop(); } });
+
+  // ---- empty state
+  const emptyStage = CubeIcons.stage($("emptyCv"), { from: "below", tilt: false });
+  CubeIcons.scroll(emptyStage, "ghost", { mode: "trigger" });
+  $("emptyAgain").addEventListener("click", () => { emptyStage.clear(); setTimeout(() => emptyStage.show("ghost"), 500); });
+
+  // ---- onboarding steps
+  const STEPS = [["person", "Make your profile"], ["gear", "Choose your settings"], ["rocket", "You're ready to go"]];
+  const stepStage = CubeIcons.stage($("stepCv"), { look: "soft", tilt: false, duration: 650 });
+  let step = 0;
+  const go = (d) => {
+    step = Math.max(0, Math.min(STEPS.length - 1, step + d));
+    stepStage.set({ from: d > 0 ? "right" : "left" });
+    stepStage.show(STEPS[step][0]); $("stepTitle").textContent = STEPS[step][1];
+    $("stepDots").querySelectorAll("i").forEach((dot, i) => dot.classList.toggle("on", i === step));
+  };
+  stepStage.show(STEPS[0][0]);
+  $("stepNext").addEventListener("click", () => go(1)); $("stepBack").addEventListener("click", () => go(-1));
+
+  // ---- hero
+  CubeIcons.sequence(CubeIcons.stage($("heroCv"), { look: "soft", gap: 0.05, from: "below" }), ["rocket", "bulb", "trophy"], { every: 2600 });
+
+  // ---- text
+  const textStage = CubeIcons.stage($("textCv"), { stagger: 140 });
+  let textColor = "B";
+  const showText = () => textStage.show(CubeIcons.text($("textIn").value || " ", { color: textColor }));
+  $("textIn").addEventListener("input", showText);
+  $("textCol").addEventListener("click", (e) => { const c = e.target.dataset.c; if (!c) return; textColor = c; press($("textCol"), "c", c); showText(); });
+  showText();
+
+  // ---- live clock
+  const clock = CubeIcons.stage($("clockCv"), { duration: 500, stagger: 60, spin: 0.1, tilt: false });
+  const pad = (n) => String(n).padStart(2, "0");
+  const tick = () => { const d = new Date(); clock.show(CubeIcons.text(pad(d.getHours()) + (d.getSeconds() % 2 ? " " : ":") + pad(d.getMinutes()), { color: "C" })); };
+  tick(); setInterval(tick, 1000);
+
+  // ---- countdown
+  const countStage = CubeIcons.stage($("countCv"), { from: "below", tilt: false, duration: 600 });
+  countStage.show(CubeIcons.text("Go?", { color: "O" }));
+  $("countGo").addEventListener("click", async () => {
+    $("countGo").disabled = true;
+    for (const n of ["3", "2", "1"]) { countStage.show(CubeIcons.text(n, { color: "O" })); await wait(900); }
+    countStage.show("rocket"); await wait(1600); countStage.clear(); await wait(700);
+    countStage.show(CubeIcons.text("Go?", { color: "O" })); $("countGo").disabled = false;
+  });
+
+  // ---- weather
+  const wx = CubeIcons.stage($("wxCv"), { look: "soft", tilt: false });
+  wx.show("sun");
+  $("wxSeg").addEventListener("click", (e) => { const i = e.target.dataset.icon; if (!i) return; press($("wxSeg"), "icon", i); wx.show(i); });
+
+  // ---- initials avatar
+  const av = CubeIcons.stage($("avCv"), { tilt: false, depth: 2, look: "soft", shadow: false });
+  const HUES = ["#2f3cff", "#d6303a", "#40be78", "#ff8c32", "#8a5cf6", "#0e9fb5"];
+  const showAvatar = () => {
+    const name = $("avIn").value.trim() || "?", initials = name.split(/\s+/).map((w) => w[0]).join("").slice(0, 2);
+    const hue = HUES[[...name].reduce((s, ch) => s + ch.charCodeAt(0), 0) % HUES.length];
+    $("avBox").style.background = hue; av.show(CubeIcons.text(initials, { color: "W" }));
+  };
+  $("avIn").addEventListener("input", showAvatar); showAvatar();
+
+  // ---- reading progress
+  const read = CubeIcons.stage($("readCv"), { tilt: false, look: "soft" });
+  const readUpdate = () => { const p = Math.min(1, scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight)); read.build("trophy", p); $("readPct").textContent = `${Math.round(p * 100)}%`; };
+  addEventListener("scroll", readUpdate, { passive: true }); readUpdate();
+
+  // ---- menu reveal
+  (() => {
+    const LOOK = { look: "soft", tint: "#3cff3c", glow: 0.8, float: 0.6, gap: 0.04, spin: 0.5 };
+    const hero = CubeIcons.stage($("rvHeroCv"), { ...LOOK, x: 0.72, tilt: false, max: 700 });
+    const menu = CubeIcons.stage($("rvMenuCv"), { ...LOOK, max: 700 });
+    const box = $("rv"), btn = $("rvBtn"), links = [...$("rvMenu").querySelectorAll("a")];
+    let open = false;
+    CubeIcons.scroll(hero, "rocket", { mode: "trigger" });
+    const pick = (a) => { links.forEach((l) => l.classList.toggle("on", l === a)); menu.show(a.dataset.icon); };
+    btn.addEventListener("click", () => {
+      open = !open;
+      box.classList.toggle("open", open); btn.textContent = open ? "Close" : "Menu"; btn.setAttribute("aria-expanded", open);
+      if (open) { hero.burst(); menu.scatter(90, { icon: "rocket" }); setTimeout(() => pick(links[0]), 350); }
+      else { menu.burst(); hero.scatter(80, { icon: "rocket" }); setTimeout(() => hero.show("rocket"), 350); }
+    });
+    links.forEach((a) => {
+      a.addEventListener("click", (e) => e.preventDefault());
+      a.addEventListener("pointerenter", () => pick(a)); a.addEventListener("focus", () => pick(a));
+    });
+  })();
+
+  // ---- floating cubes
+  (() => {
+    const st = CubeIcons.stage($("flCv"), { look: "soft", tint: "#3cff3c", glow: 0.8, float: 0.7, gap: 0.04, spin: 0.6, tilt: false, max: 400 });
+    let icon = "bolt", started = false;
+    new IntersectionObserver(([e]) => { if (e.isIntersecting && !started) { started = true; st.scatter(140, { icon }); } }).observe($("flCv"));
+    $("flGo").addEventListener("click", () => st.show(icon));
+    $("flScatter").addEventListener("click", () => st.scatter(140, { icon }));
+    $("flIcon").addEventListener("click", (e) => { const i = e.target.dataset.icon; if (!i) return; icon = i; press($("flIcon"), "icon", i); st.show(icon); });
+  })();
+
+  // ---- morph sequence
+  CubeIcons.sequence(CubeIcons.stage($("seqCv"), { stagger: 160 }), ["home", "bag", "cart", "gift", "trophy"], { every: 1800 });
+
+  // ---- explode
+  const boom = CubeIcons.stage($("boomCv"), { tilt: false });
+  boom.show("star");
+  $("boomCv").addEventListener("click", (e) => boom.explode(e.clientX, e.clientY));
+
+  // ---- magnet
+  CubeIcons.stage($("magCv"), { magnet: 1.6, tilt: false }).show("smile");
+
+  // ---- theme toggle
+  const themeStage = CubeIcons.stage($("themeBtn").querySelector("canvas"), { look: "soft", tilt: false, depth: 1, max: 200, duration: 700, shadow: false });
+  let dark = false;
+  themeStage.show("sun");
+  $("themeBtn").addEventListener("click", () => {
+    dark = !dark; $("themeBox").classList.toggle("night", dark); $("themeBtn").setAttribute("aria-pressed", dark);
+    $("themeBtn").querySelector("span").textContent = dark ? "Dark" : "Light"; themeStage.show(dark ? "moon" : "sun");
+  });
+
+  // ---- fly-in direction
+  const fromStage = CubeIcons.stage($("fromCv"), { from: "below", tilt: false });
+  fromStage.show("gift");
+  $("fromSeg").addEventListener("click", (e) => {
+    const f = e.target.dataset.f; if (!f) return;
+    press($("fromSeg"), "f", f);
+    fromStage.clear(); fromStage.set({ from: f });
+    setTimeout(() => fromStage.show("gift"), 650);
+  });
+
+  // ---- every look
+  const DARK_LOOKS = ["glass", "neon", "wire", "holo"];
+  CubeIcons.LOOKS.forEach((l) => {
+    const d = document.createElement("div");
+    d.className = DARK_LOOKS.includes(l) ? "darkbg" : "lightbg";
+    d.innerHTML = `<canvas aria-hidden="true"></canvas><span class="label">${l}</span>`;
+    $("lookGrid").append(d);
+    const s = CubeIcons.stage(d.querySelector("canvas"), { look: l, tilt: false, max: 300, gap: l === "wire" ? 0.08 : 0, tint: l === "wire" ? "#cfe0ff" : null });
+    CubeIcons.scroll(s, "gift", { mode: "trigger" });
+    d.addEventListener("click", () => { s.clear(); setTimeout(() => s.show("gift"), 500); });
+  });
+
+  // ---- your colours
+  const colStage = CubeIcons.stage($("colCv"));
+  colStage.show("chat");
+  const recolor = () => colStage.set({ palette: { ...CubeIcons.PALETTE, B: $("colIn").value, W: $("colIn2").value } });
+  $("colIn").addEventListener("input", recolor); $("colIn2").addEventListener("input", recolor);
+
+  // ---- depth and view
+  const depthStage = CubeIcons.stage($("depthCv"), { depth: 3 });
+  depthStage.show("camera");
+  $("depthIn").addEventListener("input", (e) => depthStage.set({ depth: +e.target.value }));
+  $("depthView").addEventListener("click", (e) => { const v = e.target.dataset.v; if (!v) return; press($("depthView"), "v", v); depthStage.set({ view: v }); });
+
+  // ---- deep links from the playground land on the right card
+  if (location.hash) document.querySelector(location.hash)?.scrollIntoView();
+</script>
+</body>
+</html>

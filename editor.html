@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cube Icon Editor</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+  :root { --ink: #0e0e10; --panel: #151518; --paper: #f1efea; --mute: #8a877f; --line: #2a2a2e; --accent: #2f3cff; --soft: #8d97ff; --warn: #ff7a7a; color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ink); color: var(--paper); font: 15px/1.5 "Bricolage Grotesque", system-ui, sans-serif; padding: 24px max(16px, 3vw) 60px; }
+  .label { font: 500 11px/1.3 "Geist Mono", ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; }
+  h1 { margin: 6px 0 4px; font-size: clamp(28px, 3.6vw, 42px); letter-spacing: -0.03em; font-weight: 500; line-height: 1; }
+  p { color: var(--mute); margin: 0; max-width: 64ch; }
+  a { color: var(--soft); }
+  code { font: 12px "Geist Mono", monospace; color: var(--soft); }
+  .wrap { display: grid; gap: 22px; grid-template-columns: minmax(0, 1fr) minmax(300px, 440px); margin-top: 22px; align-items: start; }
+  @media (max-width: 900px) { .wrap { grid-template-columns: minmax(0, 1fr); } }
+  .wrap > div { min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; align-content: start; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 12px; }
+  .card > .label:first-child { color: var(--soft); }
+  /* cells are 24px, and shrink to fit narrow screens */
+  .boardWrap { position: relative; width: max-content; max-width: 100%; }
+  .board { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); width: max-content; max-width: 100%; overflow: auto; touch-action: none; user-select: none; }
+  .board i { aspect-ratio: 1; background: var(--panel); display: block; }
+  .drop { position: absolute; inset: 0; display: none; place-items: center; background: rgba(47, 60, 255, 0.22); border: 2px dashed var(--soft); border-radius: 4px; font: 500 12px "Geist Mono", monospace; letter-spacing: .06em; text-transform: uppercase; pointer-events: none; }
+  body.dragging .drop { display: grid; }
+  .swatches { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .swatches button { width: 34px; height: 34px; border: 2px solid transparent; border-radius: 6px; cursor: pointer; font: 500 10px "Geist Mono", monospace; color: #000; }
+  .swatches button[aria-pressed="true"] { border-color: var(--paper); }
+  .swatches button.empty { background: repeating-conic-gradient(#333 0 25%, #222 0 50%) 0 0 / 10px 10px; color: var(--paper); }
+  .swatches .sep { width: 1px; height: 26px; background: var(--line); margin: 0 4px; }
+  .swatches label.add { width: 34px; height: 34px; border: 1px dashed var(--mute); border-radius: 6px; display: grid; place-items: center; cursor: pointer; color: var(--mute); font: 16px "Geist Mono", monospace; position: relative; }
+  .swatches label.add input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  canvas#prev { width: 100%; height: 280px; background: var(--ink); border: 1px solid var(--line); border-radius: 10px; display: block; }
+  textarea { width: 100%; min-height: 190px; background: var(--ink); color: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 10px; font: 12px/1.45 "Geist Mono", monospace; resize: vertical; }
+  .btns { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  button.b, .filebtn { font: 500 11px/1 "Geist Mono", monospace; letter-spacing: 0.06em; text-transform: uppercase; color: var(--paper); background: none; border: 1px solid var(--line); padding: 10px 12px; cursor: pointer; border-radius: 6px; display: inline-block; }
+  button.b.primary, .filebtn { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+  button[aria-pressed="true"].b { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+  button:focus-visible, .filebtn:focus-within, input:focus-visible, select:focus-visible, textarea:focus-visible, label.add:focus-within { outline: 2px solid var(--soft); outline-offset: 2px; }
+  input[type="number"], input[type="text"], select { background: var(--ink); color: var(--paper); border: 1px solid var(--line); padding: 7px 8px; font: 12px "Geist Mono", monospace; border-radius: 6px; }
+  input[type="number"] { width: 64px; }
+  input[type="range"] { width: 100%; accent-color: var(--accent); }
+  .field { display: grid; gap: 6px; min-width: 0; }
+  .field input { width: 100%; min-width: 0; }
+  .keep li code { overflow-wrap: anywhere; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .check { display: flex; gap: 8px; align-items: center; }
+  .hint { font-size: 13px; }
+  .keep { display: grid; gap: 8px; }
+  .keep li { color: var(--mute); font-size: 13px; }
+  .keep ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+  .toast { font: 500 11px "Geist Mono", monospace; letter-spacing: .06em; text-transform: uppercase; color: #40be78; min-height: 14px; }
+</style>
+</head>
+<body>
+  <h1>Icon editor</h1>
+  <p>Paint an icon cell by cell, or start from an image: drop one on the grid, paste it, or pick a file. The preview builds it in cubes as you go. When it's ready, keep it: save it to My icons, download it, or copy its code.</p>
+
+  <div class="wrap">
+    <div>
+      <div class="btns">
+        <label class="label">W <input id="w" type="number" min="3" max="48" value="14"></label>
+        <label class="label">H <input id="h" type="number" min="3" max="48" value="12"></label>
+        <button class="b" id="resize" type="button">Resize</button>
+        <button class="b" id="undo" type="button" title="Ctrl+Z">Undo</button>
+        <button class="b" id="wipe" type="button">Clear</button>
+        <label class="label">Open <select id="pick"></select></label>
+      </div>
+      <div class="swatches" id="sw" aria-label="Colours"></div>
+      <div class="boardWrap"><div class="board" id="board"></div><div class="drop">Drop the image</div></div>
+      <p class="label" style="color:var(--mute)">Drag to paint · right-click or "." to erase · Ctrl+Z to undo · + adds your own colour</p>
+
+      <div class="card" id="import">
+        <span class="label">Start from an image</span>
+        <p class="hint">Logos, emoji, stickers and flat illustrations convert best; photos become a stylised pixel version. Your image never leaves the browser.</p>
+        <div class="btns"><label class="filebtn">Choose an image<input type="file" id="file" accept="image/*" hidden></label><span class="label" id="imgName" style="color:var(--mute)">or drop / paste one</span></div>
+        <div><span class="label">Colours</span><div class="btns" id="cmode" style="margin-top:6px"><button class="b" type="button" data-m="image" aria-pressed="true">From the image</button><button class="b" type="button" data-m="palette">Built-in palette</button></div></div>
+        <div class="two">
+          <label class="field"><span class="label">Width · <span id="colsV">20</span> cells</span><input type="range" id="cols" min="6" max="48" value="20"></label>
+          <label class="field"><span class="label">Colours · <span id="maxV">8</span></span><input type="range" id="maxc" min="2" max="16" value="8"></label>
+        </div>
+        <label class="field"><span class="label">Detail · <span id="detV">balanced</span></span><input type="range" id="detail" min="0" max="100" value="55"></label>
+        <label class="check"><input type="checkbox" id="bg" checked> <span class="label">Remove the background</span></label>
+        <label class="check"><input type="checkbox" id="trim" checked> <span class="label">Trim empty edges</span></label>
+      </div>
+    </div>
+
+    <div>
+      <canvas id="prev" aria-label="Preview in cubes"></canvas>
+      <div class="btns">
+        <select id="look" aria-label="Preview look"></select>
+        <button class="b" id="view" type="button">View: front</button>
+        <button class="b" id="play" type="button">Fly in again</button>
+      </div>
+      <p class="label" id="count" aria-live="polite"></p>
+
+      <div class="card keep">
+        <span class="label">Keep your icon</span>
+        <label class="field"><span class="label">Name</span><input id="name" type="text" value="myIcon"></label>
+        <div class="btns">
+          <button class="b primary" id="saveMine" type="button">Save to My icons</button>
+          <button class="b" id="dlPng" type="button">PNG</button>
+          <button class="b" id="dlJs" type="button">.js file</button>
+          <button class="b" id="dlJson" type="button">JSON</button>
+        </div>
+        <span class="toast" id="toast" aria-live="polite"></span>
+        <ul>
+          <li><b>My icons</b> keeps it in this browser: it appears in Open above and in <a href="index.html">the playground</a>.</li>
+          <li><b>PNG</b> is a picture of it in the preview's look, for slides, docs or social posts.</li>
+          <li><b>.js file</b> adds it to your site: load it after <code>icons.js</code>, then <code>stage.show("<span class="nm">myIcon</span>")</code>.</li>
+          <li><b>JSON</b> is the icon as data, to pass straight to <code>stage.show()</code>.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <span class="label">Code</span>
+        <div class="btns" id="fmt"><button class="b" type="button" data-f="entry" aria-pressed="true">icons.js entry</button><button class="b" type="button" data-f="snippet">Drop-in snippet</button><button class="b" type="button" data-f="rows">JSON</button></div>
+        <p class="hint" id="fmtHint"></p>
+        <textarea id="code" spellcheck="false" aria-label="The icon as code"></textarea>
+        <div class="btns"><button class="b primary" id="copy" type="button">Copy</button><button class="b" id="load" type="button">Load from the box</button></div>
+      </div>
+    </div>
+  </div>
+
+<script src="icons.js"></script>
+<script src="cubes.js"></script>
+<script src="site.js"></script>
+<script>
+  const $ = (id) => document.getElementById(id);
+  const BASE = CubeIcons.PALETTE, MINE_KEY = "cubeicons:mine";
+  // custom: this icon's own colours, keyed a, b, c…
+  let W = 14, H = 12, cells = [], custom = {}, color = "B", painting = false, erasing = false, view = "front", look = "flat", fmt = "entry", history = [], lastImage = null, cmode = "image";
+  const board = $("board"), code = $("code"), nameIn = $("name"), count = $("count");
+  const prev = CubeIcons.stage($("prev"), { tilt: true, stagger: 60, duration: 500, max: 5000 });
+  const P = () => ({ ...BASE, ...custom });
+
+  // ---- colours: the built-in palette, then this icon's own, then +
+  function drawSwatches() {
+    const sw = $("sw"); sw.innerHTML = "";
+    const add = (k, bg) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.textContent = k; b.title = k === "." ? "Empty" : `${k} ${bg || ""}`;
+      if (k === ".") b.className = "empty"; else { b.style.background = bg; if (/^[a-z]$/.test(k)) b.style.color = lum(bg) > 0.55 ? "#000" : "#fff"; }
+      b.setAttribute("aria-pressed", k === color);
+      b.addEventListener("click", () => { color = k; drawSwatches(); });
+      sw.append(b);
+    };
+    add(".");
+    Object.entries(BASE).forEach(([k, v]) => add(k, v));
+    if (Object.keys(custom).length) { const s = document.createElement("span"); s.className = "sep"; sw.append(s); }
+    Object.entries(custom).forEach(([k, v]) => add(k, v));
+    const l = document.createElement("label"); l.className = "add"; l.title = "Add your own colour"; l.innerHTML = `+<input type="color" value="#ff4d8d" aria-label="Add your own colour">`;
+    l.querySelector("input").addEventListener("change", (e) => {
+      const k = "abcdefghijklmnopqrstuvwxyz".split("").find((c) => !custom[c]); if (!k) return;
+      custom[k] = e.target.value; color = k; drawSwatches(); paintAll();
+    });
+    sw.append(l);
+  }
+  const rgbOf = (col) => (col[0] === "#" ? [1, 3, 5].map((i) => parseInt(col.slice(i, i + 2), 16)) : col.match(/\d+/g).map(Number));
+  const lum = (col) => { const [r, g, b] = rgbOf(col); return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255; };
+  const hex = (c) => "#" + c.map((v) => Math.round(v).toString(16).padStart(2, "0")).join("");
+
+  // ---- the grid
+  function build() {
+    board.style.gridTemplateColumns = `repeat(${W}, minmax(5px, 24px))`;
+    board.innerHTML = "";
+    for (let i = 0; i < W * H; i++) { const c = document.createElement("i"); c.dataset.i = i; board.append(c); }
+    paintAll();
+  }
+  const rows = () => Array.from({ length: H }, (_, y) => cells.slice(y * W, y * W + W).join(""));
+  // the icon as the engine takes it: rows, or { colors, rows } when it uses its own colours
+  function icon() {
+    const r = rows(), used = Object.fromEntries(Object.entries(custom).filter(([k]) => r.some((x) => x.includes(k))));
+    return Object.keys(used).length ? { colors: used, rows: r } : r;
+  }
+  const ident = () => (nameIn.value || "myIcon").replace(/[^\w$]+(.)?/g, (_, c) => (c ? c.toUpperCase() : "")).replace(/^\d/, "_$&").replace(/^./, (c) => c.toLowerCase()) || "myIcon";
+
+  function paintAll() {
+    const pal = P();
+    [...board.children].forEach((c, i) => (c.style.background = cells[i] === "." ? "" : pal[cells[i]] || ""));
+    const r = rows();
+    if (r.some((x) => /[^.]/.test(x))) prev.show(icon()); else prev.clear();
+    // every painted cell is `depth` cubes; past the stage's pool the rest are dropped
+    const { depth, max } = prev.options, n = cells.filter((k) => k !== ".").length * depth;
+    count.textContent = n > max ? `${W}×${H} · ${n} cubes · over the ${max} limit, ${n - max} won't show` : `${W}×${H} · ${n} cubes${n > 900 ? " · raise max past 900 to show it all on a page" : ""}`;
+    count.style.color = n > max ? "var(--warn)" : "";
+    writeCode();
+  }
+
+  // ---- code
+  const ind = (s, n) => s.split("\n").map((l) => " ".repeat(n) + l).join("\n");
+  function literal(v) {
+    if (Array.isArray(v)) return `[\n${v.map((x) => `  "${x}",`).join("\n")}\n]`;
+    return `{\n  colors: { ${Object.entries(v.colors).map(([k, c]) => `${k}: "${c}"`).join(", ")} },\n  rows: [\n${v.rows.map((x) => `    "${x}",`).join("\n")}\n  ],\n}`;
+  }
+  const entry = () => ind(`${ident()}: ${literal(icon())},`, 2);
+  const FORMATS = {
+    entry: ["Paste it inside window.CUBE_ICONS in icons.js, then show it by name.", entry],
+    snippet: ["Everything one page needs: paste it into your HTML. It loads the engine from the CDN; icons.js isn't needed.", () => {
+      const id = `cube-${ident()}`, n = cells.filter((k) => k !== ".").length * 2;
+      const opts = [look !== "flat" ? `look: "${look}"` : "", n > 900 ? `max: ${Math.ceil(n / 100) * 100}` : ""].filter(Boolean).join(", ");
+      return `<canvas id="${id}" style="width:320px;height:240px" role="img" aria-label="${nameIn.value || "icon"}"></canvas>\n<script src="${SITE.cdn}cubes.js"><\/script>\n<script>\n  const ${ident()} = ${literal(icon()).replace(/\n/g, "\n  ")};\n  CubeIcons.stage(document.getElementById("${id}")${opts ? `, { ${opts} }` : ""}).show(${ident()});\n<\/script>`;
+    }],
+    rows: ["The icon as JSON: pass it straight to stage.show(), or store it anywhere.", () => JSON.stringify(icon(), null, 2)],
+  };
+  function writeCode() { const [hint, make] = FORMATS[fmt]; $("fmtHint").textContent = hint; code.value = make(); document.querySelectorAll(".nm").forEach((e) => (e.textContent = ident())); }
+
+  // ---- undo
+  const snapshot = () => { history.push({ W, H, cells: cells.slice(), custom: { ...custom } }); if (history.length > 60) history.shift(); };
+  function undo() { const s = history.pop(); if (!s) return; ({ W, H } = s); cells = s.cells; custom = s.custom; $("w").value = W; $("h").value = H; drawSwatches(); build(); }
+
+  function set(i, k) { if (i == null || cells[i] === k) return; cells[i] = k; paintAll(); }
+  // the cell under the pointer; touch keeps sending events to the cell it started on, so look it up by position
+  const cellAt = (e) => { const t = document.elementFromPoint(e.clientX, e.clientY); return t && t.parentNode === board ? +t.dataset.i : null; };
+  board.addEventListener("pointerdown", (e) => { snapshot(); painting = true; erasing = e.button === 2; set(cellAt(e), erasing ? "." : color); e.preventDefault(); });
+  board.addEventListener("pointermove", (e) => { if (painting) set(cellAt(e), erasing ? "." : color); });
+  addEventListener("pointerup", () => (painting = false));
+  addEventListener("pointercancel", () => (painting = false));
+  board.addEventListener("contextmenu", (e) => e.preventDefault());
+  addEventListener("keydown", (e) => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z" && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) { e.preventDefault(); undo(); } });
+
+  // load an icon: rows, or { colors, rows }
+  function load(v, remember = true) {
+    if (remember) snapshot();
+    const r = Array.isArray(v) ? v : v.rows;
+    custom = Array.isArray(v) ? {} : { ...(v.colors || {}) };
+    const pal = P();
+    H = r.length; W = Math.max(...r.map((x) => x.length)); $("w").value = W; $("h").value = H;
+    cells = r.flatMap((x) => [...x.padEnd(W, ".")].map((ch) => (pal[ch] ? ch : ".")));
+    if (!pal[color]) color = "B";
+    drawSwatches(); build();
+  }
+  $("resize").addEventListener("click", () => {
+    snapshot();
+    const nw = Math.min(48, Math.max(3, +$("w").value)), nh = Math.min(48, Math.max(3, +$("h").value)), old = rows();
+    W = nw; H = nh; cells = Array.from({ length: H }, (_, y) => (old[y] || "").padEnd(W, ".").slice(0, W)).flatMap((x) => [...x]); build();
+  });
+  $("undo").addEventListener("click", undo);
+  $("wipe").addEventListener("click", () => { snapshot(); cells = Array(W * H).fill("."); paintAll(); });
+  $("view").addEventListener("click", (e) => { view = view === "front" ? "iso" : "front"; e.target.textContent = `View: ${view}`; prev.set({ view }); });
+  $("look").innerHTML = CubeIcons.LOOKS.map((l) => `<option value="${l}">Look: ${l}</option>`).join("");
+  $("look").addEventListener("change", (e) => { look = e.target.value; prev.set({ look }); writeCode(); });
+  $("play").addEventListener("click", () => { prev.clear(); setTimeout(paintAll, 450); });
+  nameIn.addEventListener("input", writeCode);
+  $("fmt").addEventListener("click", (e) => { const f = e.target.dataset.f; if (!f) return; fmt = f; $("fmt").querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.f === f)); writeCode(); });
+  $("copy").addEventListener("click", async (e) => {
+    try { await navigator.clipboard.writeText(code.value); e.target.textContent = "Copied"; } catch { code.select(); e.target.textContent = "Selected"; }
+    setTimeout(() => (e.target.textContent = "Copy"), 1400);
+  });
+  $("load").addEventListener("click", () => {
+    const t = code.value.trim();
+    try { const v = JSON.parse(t); if (Array.isArray(v) || v.rows) return load(v); } catch {}
+    const r = [...t.matchAll(/"([A-Za-z.]+)"/g)].map((m) => m[1]);
+    const colors = Object.fromEntries([...t.matchAll(/\b([a-z])\s*:\s*"(#[0-9a-fA-F]{3,8}|rgb\([^)]*\))"/g)].map((m) => [m[1], m[2]]));
+    if (r.length) load(Object.keys(colors).length ? { colors, rows: r } : r);
+  });
+
+  // ---- My icons: kept in this browser; site.js adds them to CUBE_ICONS on every page
+  const readMine = () => { try { return JSON.parse(localStorage.getItem(MINE_KEY) || "{}"); } catch { return {}; } };
+  function fillPick() {
+    const mine = readMine(), own = Object.keys(mine), lib = Object.keys(CUBE_ICONS).filter((n) => !own.includes(n));
+    $("pick").innerHTML = `<option value="">an icon…</option>` + (own.length ? `<optgroup label="My icons">${own.map((n) => `<option>${n}</option>`).join("")}</optgroup>` : "") + `<optgroup label="Library">${lib.map((n) => `<option>${n}</option>`).join("")}</optgroup>`;
+  }
+  $("pick").addEventListener("change", () => { const n = $("pick").value; if (n) { nameIn.value = n; load(readMine()[n] || CUBE_ICONS[n]); $("pick").value = ""; } });
+  const toast = (t) => { $("toast").textContent = t; clearTimeout(toast.id); toast.id = setTimeout(() => ($("toast").textContent = ""), 2400); };
+  $("saveMine").addEventListener("click", () => {
+    try { const mine = readMine(); mine[ident()] = icon(); localStorage.setItem(MINE_KEY, JSON.stringify(mine)); CUBE_ICONS[ident()] = icon(); fillPick(); toast(`Saved as "${ident()}" in My icons`); }
+    catch { toast("This browser won't let the page save. Use .js or JSON instead."); }
+  });
+
+  // ---- downloads
+  function download(blob, file) { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = file; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); }
+  $("dlJs").addEventListener("click", () => download(new Blob([`// Cube Icons: ${ident()}. Load after icons.js, then stage.show("${ident()}").\nwindow.CUBE_ICONS = Object.assign(window.CUBE_ICONS || {}, {\n${entry()}\n});\n`], { type: "text/javascript" }), `${ident()}.js`));
+  $("dlJson").addEventListener("click", () => download(new Blob([JSON.stringify(icon(), null, 2)], { type: "application/json" }), `${ident()}.json`));
+  $("dlPng").addEventListener("click", () => {
+    // draw it settled, at twice 800px wide, on a transparent background, in the preview's look and view
+    const c = document.createElement("canvas"), ratio = (H + 3) / (W + 3);
+    c.style.cssText = `position:fixed;left:-10000px;top:0;width:800px;height:${Math.round(800 * ratio)}px`;
+    document.body.append(c);
+    CubeIcons.still(c, icon(), { look, view });
+    c.toBlob((b) => { download(b, `${ident()}.png`); c.remove(); }, "image/png");
+  });
+
+  // ---- image import
+  // the image is read at up to 320px, the background is cleared there, its colours are found (or snapped to the
+  // palette), and each cell takes the colour most of its pixels share, so edges stay crisp instead of muddy
+  const dist = (a, b) => { const r = (a[0] + b[0]) / 2, dr = a[0] - b[0], dg = a[1] - b[1], db = a[2] - b[2]; return Math.sqrt((2 + r / 256) * dr * dr + 4 * dg * dg + (2 + (255 - r) / 256) * db * db); };
+
+  function readImage(img) {
+    const iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height, k = Math.min(1, 320 / Math.max(iw, ih));
+    const w = Math.max(1, Math.round(iw * k)), h = Math.max(1, Math.round(ih * k));
+    const c = document.createElement("canvas"); c.width = w; c.height = h;
+    const g = c.getContext("2d", { willReadFrequently: true }); g.imageSmoothingQuality = "high"; g.drawImage(img, 0, 0, w, h);
+    const d = g.getImageData(0, 0, w, h).data, px = new Array(w * h), on = new Uint8Array(w * h);
+    for (let i = 0; i < w * h; i++) { px[i] = [d[i * 4], d[i * 4 + 1], d[i * 4 + 2]]; on[i] = d[i * 4 + 3] >= 128 ? 1 : 0; }
+    return { w, h, px, on };
+  }
+
+  function clearBackground({ w, h, px, on }) {
+    const edge = [];
+    for (let x = 0; x < w; x++) edge.push(x, (h - 1) * w + x);
+    for (let y = 0; y < h; y++) edge.push(y * w, y * w + w - 1);
+    const tally = new Map();
+    edge.forEach((i) => { if (on[i]) { const key = px[i].map((v) => v >> 4).join(); tally.set(key, (tally.get(key) || 0) + 1); } });
+    const top = [...tally].sort((a, b) => b[1] - a[1])[0];
+    if (!top || top[1] < edge.length * 0.3) return;
+    const sample = edge.filter((i) => on[i] && px[i].map((v) => v >> 4).join() === top[0]);
+    const ref = [0, 1, 2].map((j) => sample.reduce((s, i) => s + px[i][j], 0) / sample.length);
+    // flood inward from the edge through everything close to that colour
+    const seen = new Uint8Array(w * h), near = (i) => on[i] && !seen[i] && dist(px[i], ref) < 60;
+    const stack = edge.filter(near);
+    while (stack.length) {
+      const i = stack.pop(); if (seen[i]) continue; seen[i] = 1; on[i] = 0;
+      const x = i % w, y = (i / w) | 0;
+      for (const j of [x > 0 ? i - 1 : -1, x < w - 1 ? i + 1 : -1, y > 0 ? i - w : -1, y < h - 1 ? i + w : -1]) if (j >= 0 && near(j)) stack.push(j);
+    }
+  }
+
+  // k-means: the image's own main colours, started from well-spread picks so small accents survive
+  function findColors(samples, k) {
+    const centres = [samples[Math.floor(samples.length / 2)]];
+    while (centres.length < k) {
+      let best = null, far = -1;
+      for (let i = 0; i < samples.length; i += 3) { const d = Math.min(...centres.map((c) => dist(c, samples[i]))); if (d > far) { far = d; best = samples[i]; } }
+      if (far < 12) break;
+      centres.push(best);
+    }
+    for (let it = 0; it < 10; it++) {
+      const sum = centres.map(() => [0, 0, 0, 0]);
+      for (const p of samples) { let bi = 0, bd = Infinity; centres.forEach((c, j) => { const d = dist(c, p); if (d < bd) { bd = d; bi = j; } }); sum[bi][0] += p[0]; sum[bi][1] += p[1]; sum[bi][2] += p[2]; sum[bi][3]++; }
+      sum.forEach((s, j) => { if (s[3]) centres[j] = [s[0] / s[3], s[1] / s[3], s[2] / s[3]]; });
+    }
+    return centres;
+  }
+
+  function imageToIcon(img, { cols, mode, maxColors, detail, removeBg, trim }) {
+    const im = readImage(img);
+    if (removeBg) clearBackground(im);
+    const { w, h, px, on } = im;
+    let rowsN = Math.max(1, Math.round((cols * h) / w));
+    if (rowsN > 48) { cols = Math.max(3, Math.round((cols * 48) / rowsN)); rowsN = 48; }
+
+    // the colours to use, as [key, rgb] pairs
+    const fg = []; for (let i = 0; i < w * h; i++) if (on[i]) fg.push(px[i]);
+    const samples = fg.length > 24000 ? fg.filter((_, i) => i % Math.ceil(fg.length / 24000) === 0) : fg;
+    let keys;
+    if (mode === "image" && samples.length) keys = findColors(samples, maxColors).map((c, i) => ["abcdefghijklmnop"[i], c]);
+    else keys = Object.entries(BASE).map(([k, v]) => [k, rgbOf(v)]);
+    const cache = new Map();
+    const nearest = (p) => { const q = (p[0] >> 2) * 4096 + (p[1] >> 2) * 64 + (p[2] >> 2); let k = cache.get(q); if (k === undefined) { let bd = Infinity; for (const [kk, c] of keys) { const d = dist(c, p); if (d < bd) { bd = d; k = kk; } } cache.set(q, k); } return k; };
+
+    // each cell: empty if too little of it is shape, otherwise its most common colour
+    const need = 0.6 - (detail / 100) * 0.5; // detail 0 → a cell must be 60% filled; 100 → 10%
+    let out = [];
+    for (let cy = 0; cy < rowsN; cy++) {
+      let row = "";
+      for (let cx = 0; cx < cols; cx++) {
+        const x0 = Math.floor((cx * w) / cols), x1 = Math.max(x0 + 1, Math.floor(((cx + 1) * w) / cols));
+        const y0 = Math.floor((cy * h) / rowsN), y1 = Math.max(y0 + 1, Math.floor(((cy + 1) * h) / rowsN));
+        const tally = new Map(); let filled = 0, total = 0;
+        for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) { total++; const i = y * w + x; if (on[i]) { filled++; const k = nearest(px[i]); tally.set(k, (tally.get(k) || 0) + 1); } }
+        row += filled / total < need ? "." : [...tally].sort((a, b) => b[1] - a[1])[0][0];
+      }
+      out.push(row);
+    }
+
+    // built-in palette: keep only the most used colours if asked for fewer
+    let colors = null;
+    if (mode === "image") colors = Object.fromEntries(keys.map(([k, c]) => [k, hex(c)]));
+    else {
+      const used = [...out.join("").replace(/\./g, "")].reduce((m, k) => m.set(k, (m.get(k) || 0) + 1), new Map());
+      const keep = [...used].sort((a, b) => b[1] - a[1]).slice(0, maxColors).map(([k]) => k);
+      if (used.size > maxColors) out = out.map((r) => [...r].map((k) => (k === "." || keep.includes(k) ? k : keep.reduce((b, kk) => (dist(rgbOf(BASE[kk]), rgbOf(BASE[k])) < dist(rgbOf(BASE[b]), rgbOf(BASE[k])) ? kk : b), keep[0]))).join(""));
+    }
+    if (trim) {
+      const filled = (s) => /[^.]/.test(s);
+      while (out.length > 1 && !filled(out[0])) out.shift();
+      while (out.length > 1 && !filled(out[out.length - 1])) out.pop();
+      const xs = out.flatMap((r) => [...r].map((ch, x) => (ch !== "." ? x : null)).filter((x) => x !== null));
+      if (xs.length) { const a = Math.min(...xs), b = Math.max(...xs); out = out.map((r) => r.slice(a, b + 1)); }
+    }
+    // drop colours that ended up unused
+    if (colors) { const all = out.join(""); colors = Object.fromEntries(Object.entries(colors).filter(([k]) => all.includes(k))); }
+    return colors ? { colors, rows: out } : out;
+  }
+
+  function convert(remember = true) {
+    if (!lastImage) return;
+    load(imageToIcon(lastImage, { cols: +$("cols").value, mode: cmode, maxColors: +$("maxc").value, detail: +$("detail").value, removeBg: $("bg").checked, trim: $("trim").checked }), remember);
+  }
+  function openFile(file) {
+    if (!file || !file.type.startsWith("image/")) return;
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      lastImage = img; $("imgName").textContent = file.name || "pasted image";
+      // a short readable name: camera-style names (all digits and underscores) become "image"
+      const base = (file.name || "image").replace(/\.[^.]+$/, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      nameIn.value = /[a-z]/.test(base) ? base.slice(0, 28).replace(/-$/, "") : "image";
+      convert(true);
+    };
+    img.onerror = () => { $("imgName").textContent = "That file couldn't be read as an image."; };
+    img.src = url;
+  }
+  $("file").addEventListener("change", (e) => openFile(e.target.files[0]));
+  const labels = () => {
+    $("colsV").textContent = $("cols").value; $("maxV").textContent = $("maxc").value;
+    const d = +$("detail").value; $("detV").textContent = d < 30 ? "clean" : d > 75 ? "fine" : "balanced";
+    $("maxc").max = cmode === "image" ? 16 : 13;
+  };
+  ["cols", "maxc", "detail"].forEach((id) => $(id).addEventListener("input", () => { labels(); convert(false); }));
+  ["bg", "trim"].forEach((id) => $(id).addEventListener("change", () => convert(false)));
+  $("cmode").addEventListener("click", (e) => { const m = e.target.dataset.m; if (!m) return; cmode = m; $("cmode").querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.m === m)); labels(); convert(false); });
+  // drop anywhere on the page; paste from the clipboard
+  let depth = 0;
+  addEventListener("dragenter", (e) => { if ([...e.dataTransfer.types].includes("Files")) { depth++; document.body.classList.add("dragging"); } });
+  addEventListener("dragleave", () => { if (--depth <= 0) { depth = 0; document.body.classList.remove("dragging"); } });
+  addEventListener("dragover", (e) => e.preventDefault());
+  addEventListener("drop", (e) => { e.preventDefault(); depth = 0; document.body.classList.remove("dragging"); openFile(e.dataTransfer.files[0]); });
+  addEventListener("paste", (e) => { const item = [...(e.clipboardData?.items || [])].find((i) => i.type.startsWith("image/")); if (item) openFile(item.getAsFile()); });
+
+  fillPick(); labels();
+  cells = Array(W * H).fill(".");
+  nameIn.value = "briefcase"; load(CUBE_ICONS.briefcase, false);
+</script>
+</body>
+</html>

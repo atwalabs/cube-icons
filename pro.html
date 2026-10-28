@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cube Icons Pro</title>
+<meta name="description" content="Cube Icons Pro: a big icon library, ready-made sections, framework components and export, for a one-time payment.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+  :root { --ink: #0e0e10; --panel: #151518; --paper: #f1efea; --mute: #8f8b83; --line: #2a2a2e; --accent: #2f3cff; --soft: #8d97ff; color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ink); color: var(--paper); font: 15.5px/1.6 "Bricolage Grotesque", system-ui, sans-serif; padding: 24px max(16px, 3vw) 60px; }
+  .label { font: 500 11px/1.3 "Geist Mono", ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; }
+  a { color: var(--soft); }
+  h1 { margin: 10px 0 12px; font-size: clamp(38px, 6vw, 76px); line-height: 0.95; letter-spacing: -0.045em; font-weight: 500; max-width: 13ch; }
+  h2 { margin: 0 0 8px; font-size: clamp(24px, 3vw, 34px); letter-spacing: -0.03em; font-weight: 500; line-height: 1.1; }
+  p { color: #c8c4bc; margin: 0; max-width: 62ch; }
+  section { margin-top: 72px; }
+  .hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 28px; align-items: center; margin-top: 10px; }
+  @media (max-width: 860px) { .hero { grid-template-columns: minmax(0, 1fr); } }
+  .hero canvas { width: 100%; height: 360px; display: block; }
+  .pill { display: inline-flex; gap: 8px; align-items: center; padding: 6px 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--mute); }
+  .pill i { width: 7px; height: 7px; border-radius: 50%; background: #40be78; box-shadow: 0 0 0 3px rgba(64, 190, 120, 0.2); }
+  .lead { font-size: 18px; color: #d8d4cc; margin-bottom: 22px; }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { display: inline-block; padding: 12px 18px; border-radius: 999px; text-decoration: none; font-weight: 500; border: 1px solid var(--line); color: var(--paper); }
+  .btn.primary { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+  .btn:focus-visible, button:focus-visible { outline: 2px solid var(--soft); outline-offset: 2px; }
+  .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 14px; }
+  .box { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+  .box.pro { border-color: rgba(141, 151, 255, 0.5); background: linear-gradient(180deg, rgba(47, 60, 255, 0.12), var(--panel) 60%); }
+  .box ul { margin: 12px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+  .box li { padding-left: 22px; position: relative; color: #c8c4bc; }
+  .box li::before { content: ""; position: absolute; left: 2px; top: 8px; width: 9px; height: 9px; background: currentColor; opacity: 0.5; box-shadow: 2px -2px 0 rgba(255,255,255,.25); }
+  .box.pro li::before { background: var(--soft); opacity: 1; }
+
+  /* live previews: a picture of the layout, live cube stages on top */
+  .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(460px, 100%), 1fr)); gap: 18px; margin-top: 18px; }
+  .pv { margin: 0; }
+  .frame { position: relative; aspect-ratio: 8 / 5; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: var(--panel); user-select: none; -webkit-user-select: none; }
+  .frame > img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; -webkit-user-drag: none; }
+  .frame canvas { position: absolute; display: block; }
+  .frame .hot { position: absolute; cursor: pointer; border-radius: 10px; }
+  .frame .open { position: absolute; top: 8px; right: 8px; font: 500 10px "Geist Mono", monospace; letter-spacing: .06em; text-transform: uppercase; padding: 6px 8px; border-radius: 6px; border: 0; background: rgba(0,0,0,.55); color: #fff; cursor: pointer; opacity: 0; transition: opacity .2s; z-index: 2; }
+  .frame:hover .open, .frame:focus-within .open { opacity: 1; }
+  figcaption { display: flex; justify-content: space-between; gap: 10px; margin-top: 8px; align-items: baseline; }
+  figcaption b { font-weight: 500; }
+  figcaption span { color: var(--mute); font-size: 14px; text-align: right; }
+  dialog { border: 0; padding: 0; background: transparent; width: min(1280px, 94vw); max-width: none; }
+  dialog::backdrop { background: rgba(0, 0, 0, 0.82); }
+  dialog .frame { border-color: #333; }
+  dialog .bar { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; color: #d8d4cc; }
+  dialog .bar button { font: 500 11px "Geist Mono", monospace; text-transform: uppercase; letter-spacing: .06em; padding: 8px 12px; border-radius: 6px; border: 1px solid #444; background: #151518; color: #fff; cursor: pointer; }
+
+  .uses { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr)); gap: 10px; margin-top: 18px; }
+  .use { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px 14px; }
+  .use canvas { width: 100%; height: 90px; display: block; }
+  .use b { font-weight: 500; display: block; }
+  .use span { color: var(--mute); font-size: 14px; }
+  .faq { display: grid; gap: 10px; margin-top: 16px; max-width: 760px; }
+  details { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  summary { cursor: pointer; font-weight: 500; }
+  details p { margin-top: 8px; }
+</style>
+</head>
+<body>
+  <div class="hero">
+    <div>
+      <span class="pill label"><i></i>Pro · coming soon</span>
+      <h1>More icons. Ready-made sections.</h1>
+      <p class="lead">Cube Icons Pro builds on the free engine with a big icon library, sections you can drop into a page, framework components and export. One payment, yours to keep: no subscription, no credits.</p>
+      <div class="ctas"><a class="btn primary" id="follow" href="#">Follow on GitHub for the launch</a><a class="btn" href="docs.html">Start with the free version</a></div>
+    </div>
+    <canvas id="heroCv" aria-label="A crown built from cubes"></canvas>
+  </div>
+
+  <section>
+    <div class="split">
+      <div class="box">
+        <p class="label" style="color:var(--mute)">Free, forever · MIT licence</p>
+        <h2 style="margin-top:6px">Everything else on this site</h2>
+        <ul>
+          <li>The full engine: all 11 looks, every option and interaction</li>
+          <li>61 icons, pixel text in any word, and your own icons</li>
+          <li>The playground, 28 recipes, and the editor with image import</li>
+          <li>Copy-paste install for any site, and the Claude skill</li>
+          <li>Personal and commercial use</li>
+        </ul>
+      </div>
+      <div class="box pro">
+        <p class="label" style="color:var(--soft)">Pro · one-time payment</p>
+        <h2 style="margin-top:6px">Built to save you days</h2>
+        <ul>
+          <li><b>300+ icons</b> in themed packs: business, devices, travel, food, weather, seasons</li>
+          <li><b>16+ ready-made sections</b>, like the ones below, ready to paste</li>
+          <li><b>Components</b> for React, Web Components and Framer</li>
+          <li><b>Export</b> to GIF, MP4 and SVG sprites for email, slides and social</li>
+          <li><b>A Figma file</b> with every icon</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="label" style="color:var(--soft)">Live previews</p>
+    <h2>Ready-made sections</h2>
+    <p>Sixteen of the sections coming in Pro. The cubes are live: they build as you scroll, and react when you hover the cards, buttons and rows. Open any one to see it bigger. The sections' own code ships with Pro.</p>
+    <div class="gallery" id="gallery"></div>
+  </section>
+
+  <section>
+    <p class="label" style="color:var(--soft)">Where it fits</p>
+    <h2>Anywhere a page needs a moment</h2>
+    <div class="uses" id="uses"></div>
+  </section>
+
+  <section>
+    <h2>Questions</h2>
+    <div class="faq">
+      <details><summary>Will the free version stay free?</summary><p>Yes. The engine, the icons, the tools and the Claude skill are MIT-licensed and stay that way, including for commercial work. Pro adds to them; it doesn't take anything away.</p></details>
+      <details><summary>Why one payment and not a subscription?</summary><p>Nothing in Cube Icons costs anything to run: no servers, no AI credits. So there's nothing to bill monthly. Pay once and keep what you bought.</p></details>
+      <details><summary>Can I build these sections myself with the free version?</summary><p>Yes, the engine is the same. Pro saves you the design and build time: finished, responsive sections, tuned and ready to paste.</p></details>
+      <details><summary>Do I need Pro to use Cube Icons with Claude?</summary><p>No. The free skill covers the engine, the icon format and the recipes. Claude can draw new icons for you with it.</p></details>
+      <details><summary>When does Pro launch, and what will it cost?</summary><p>Pricing and the date come with the launch. Follow the GitHub repo to hear first.</p></details>
+    </div>
+  </section>
+
+  <dialog id="zoom" aria-label="Preview"><div id="zoomBody"></div><div class="bar"><b id="zoomTitle"></b><button type="button" id="zoomClose">Close</button></div></dialog>
+
+<script src="icons.js"></script>
+<script src="cubes.js"></script>
+<script src="site.js"></script>
+<script src="assets/pro/sections.js"></script>
+<script>
+  const $ = (id) => document.getElementById(id);
+  $("follow").href = SITE.repo;
+  CubeIcons.sequence(CubeIcons.stage($("heroCv"), { look: "soft", gap: 0.05, shadow: true, from: "below" }), ["crown", "trophy", "diamond", "gift"], { every: 2600 });
+
+  const INFO = {
+    hero: ["Launch hero", "Changes every few seconds"], pricing: ["Pricing cards", "Hover a plan"], notfound: ["404 page", "Point at the ghost, then the button"],
+    features: ["Feature grid", "Hover a card"], empty: ["App empty state", "Hover the button"], mega: ["Mega menu", "Hover the items"],
+    quotes: ["Testimonials", "Hover a quote"], stats: ["Stats band", "Hover a number"], news: ["Newsletter", "Hover Subscribe"],
+    signin: ["Sign in", "Hover Sign in"], checklist: ["Onboarding checklist", "Hover the steps left to do"], splash: ["Splash screen", "Builds on a loop"],
+    team: ["Team", "Hover a person"], app: ["App download", "Hover a store button"], contact: ["Contact", "Hover the rows, then Send"], footer: ["Footer", "Move over the wordmark"],
+  };
+
+  /**
+   * One live preview: the section's picture, a stage on each cube spot, and hover areas. Builds when it comes into
+   * view. Returns { destroy }. The picture carries the layout; no section markup or styles are on this page.
+   */
+  function preview(host, sec) {
+    host.innerHTML = `<img src="assets/pro/${sec.id}.webp" alt="${INFO[sec.id]?.[0] || sec.id} preview" draggable="false">`;
+    const stages = {}, timers = [];
+    for (const s of sec.stages) {
+      const c = document.createElement("canvas");
+      c.setAttribute("aria-hidden", "true");
+      Object.assign(c.style, { left: `${s.at[0] * 100}%`, top: `${s.at[1] * 100}%`, width: `${s.at[2] * 100}%`, height: `${s.at[3] * 100}%` });
+      host.append(c);
+      const icon = s.text ? CubeIcons.text(s.text, { color: s.color || "B" }) : s.icon;
+      stages[s.id] = { st: CubeIcons.stage(c, { ...s.o, ...(s.act === "magnet" ? { magnet: 1.8 } : {}), max: 1200 }), icon, act: s.act };
+    }
+    for (const h of sec.hots) {
+      const d = document.createElement("div"), t = stages[h.target];
+      d.className = "hot";
+      Object.assign(d.style, { left: `${h.at[0] * 100}%`, top: `${h.at[1] * 100}%`, width: `${h.at[2] * 100}%`, height: `${h.at[3] * 100}%` });
+      host.append(d);
+      if (!t) continue;
+      const [what, arg] = h.do.split(":");
+      d.addEventListener("pointerenter", () => (what === "explode" ? t.st.explode(null, null, 2.2) : t.st.show(arg)));
+      if (what === "swap") d.addEventListener("pointerleave", () => t.st.show(t.icon));
+    }
+    let started = false;
+    function start() {
+      if (started) return; started = true;
+      Object.values(stages).forEach((s, i) => {
+        if (s.act.startsWith("seq:")) timers.push(CubeIcons.sequence(s.st, s.act.slice(4).split(","), { every: 2600 }));
+        else if (s.act === "loop") {
+          // build, hold, clear, repeat: a loading screen that never quite finishes
+          let t0 = performance.now(), raf = 0;
+          const run = (now) => {
+            const p = (now - t0) / 2600;
+            if (p <= 1) s.st.build(s.icon, p);
+            else if (p > 1.5) { s.st.clear(); t0 = now + 700; }
+            raf = requestAnimationFrame(run);
+          };
+          raf = requestAnimationFrame(run);
+          timers.push({ destroy: () => cancelAnimationFrame(raf) });
+        } else setTimeout(() => s.st.show(s.icon), i * 90);
+      });
+    }
+    const io = new IntersectionObserver(([e]) => { if (e.intersectionRatio >= 0.35) start(); }, { threshold: [0, 0.35] });
+    io.observe(host);
+    host.addEventListener("contextmenu", (e) => e.preventDefault());
+    return { destroy() { io.disconnect(); timers.forEach((t) => t.destroy()); Object.values(stages).forEach((s) => s.st.destroy()); host.innerHTML = ""; } };
+  }
+
+  // the gallery
+  const gallery = $("gallery");
+  (window.PRO_PREVIEWS || []).forEach((sec) => {
+    const [title, hint] = INFO[sec.id] || [sec.id, ""];
+    const fig = document.createElement("figure");
+    fig.className = "pv";
+    fig.innerHTML = `<div class="frame"></div><figcaption><b>${title}</b><span>${hint}</span></figcaption>`;
+    gallery.append(fig);
+    const frame = fig.querySelector(".frame");
+    preview(frame, sec);
+    const open = document.createElement("button");
+    open.type = "button"; open.className = "open"; open.textContent = "Open"; open.setAttribute("aria-label", `Open the ${title} preview larger`);
+    open.addEventListener("click", () => openZoom(sec, title));
+    frame.append(open);
+  });
+
+  // larger view: a fresh live preview in a dialog, destroyed on close
+  let zoomed = null;
+  function openZoom(sec, title) {
+    $("zoomBody").innerHTML = `<div class="frame"></div>`; $("zoomTitle").textContent = title;
+    $("zoom").showModal();
+    zoomed = preview($("zoomBody").firstChild, sec);
+  }
+  $("zoom").addEventListener("close", () => { zoomed?.destroy(); zoomed = null; });
+  $("zoomClose").addEventListener("click", () => $("zoom").close());
+  $("zoom").addEventListener("click", (e) => { if (e.target === $("zoom")) $("zoom").close(); });
+
+  const USES = [
+    ["rocket", "Landing heroes", "The first thing people see."],
+    ["briefcase", "Navigation", "An object per menu item."],
+    ["gift", "Pricing", "One icon per plan."],
+    ["ghost", "Empty states", "Friendlier than a blank page."],
+    ["flag", "404 and errors", "Turn a dead end into a smile."],
+    ["check", "Onboarding", "Celebrate each step."],
+    ["download", "Loaders", "Progress you can watch build."],
+    ["bulb", "Feature grids", "Each card its own icon."],
+    ["envelope", "Email and slides", "Exported as GIF or MP4 (Pro)."],
+  ];
+  $("uses").innerHTML = USES.map(([i, t, d]) => `<div class="use"><canvas data-icon="${i}" aria-hidden="true"></canvas><b>${t}</b><span>${d}</span></div>`).join("");
+  requestAnimationFrame(() => document.querySelectorAll(".use canvas").forEach((c) => CubeIcons.still(c, c.dataset.icon, { look: "soft", depth: 2 })));
+</script>
+</body>
+</html>

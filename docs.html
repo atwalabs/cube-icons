@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cube Icons Docs</title>
+<meta name="description" content="Install Cube Icons in two minutes: animated pixel icons built from 3D cubes, with no dependencies.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+  :root { --ink: #0e0e10; --panel: #151518; --paper: #f1efea; --mute: #8f8b83; --line: #2a2a2e; --accent: #2f3cff; --soft: #8d97ff; color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 20px; }
+  body { margin: 0; background: var(--ink); color: var(--paper); font: 15.5px/1.65 "Bricolage Grotesque", system-ui, sans-serif; padding: 24px max(16px, 3vw) 60px; }
+  .label { font: 500 11px/1.3 "Geist Mono", ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; }
+  a { color: var(--soft); }
+  .layout { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 44px; align-items: start; }
+  @media (max-width: 900px) { .layout { grid-template-columns: minmax(0, 1fr); } .side { display: none; } }
+  .side { position: sticky; top: 20px; display: grid; gap: 2px; font: 13px/1.4 "Bricolage Grotesque", sans-serif; }
+  .side .label { margin: 14px 0 4px; color: var(--mute); }
+  .side a { color: var(--mute); text-decoration: none; padding: 5px 8px; border-radius: 6px; }
+  .side a:hover, .side a.on { color: var(--paper); background: rgba(127, 127, 127, 0.14); }
+  main { max-width: 820px; min-width: 0; }
+  h1 { margin: 0 0 8px; font-size: clamp(32px, 4.4vw, 52px); line-height: 1; letter-spacing: -0.035em; font-weight: 500; }
+  h2 { margin: 56px 0 10px; font-size: 27px; letter-spacing: -0.025em; font-weight: 500; line-height: 1.15; padding-top: 18px; border-top: 1px solid var(--line); }
+  h3 { margin: 28px 0 8px; font-size: 18px; letter-spacing: -0.015em; font-weight: 500; }
+  p, li { color: #c8c4bc; }
+  p { margin: 0 0 12px; }
+  .lead { font-size: 18px; color: #d8d4cc; max-width: 62ch; }
+  code { font: 13px "Geist Mono", monospace; color: var(--soft); background: rgba(141, 151, 255, 0.1); padding: 1px 5px; border-radius: 4px; }
+  pre { margin: 10px 0 18px; padding: 16px 16px 16px 16px; padding-right: 72px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow-x: auto; font: 12.5px/1.6 "Geist Mono", monospace; color: #d4d6ea; }
+  pre code { background: none; padding: 0; color: inherit; font: inherit; }
+  .steps { counter-reset: step; display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; margin: 14px 0; }
+  .step { position: relative; padding-left: 44px; min-width: 0; }
+  p code, li code, td code { overflow-wrap: anywhere; }
+  .step::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 2px; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--panel); border: 1px solid var(--line); font: 500 12px "Geist Mono", monospace; color: var(--paper); }
+  .step h3 { margin-top: 4px; }
+  .tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 12px; }
+  .tabs button { font: 500 11px/1 "Geist Mono", monospace; letter-spacing: 0.06em; text-transform: uppercase; color: var(--mute); background: none; border: 1px solid var(--line); padding: 9px 12px; border-radius: 6px; cursor: pointer; }
+  .tabs button[aria-selected="true"] { color: var(--ink); background: var(--paper); border-color: var(--paper); }
+  .tabs button:focus-visible { outline: 2px solid var(--soft); outline-offset: 2px; }
+  [role="tabpanel"][hidden] { display: none; }
+  .note { border: 1px solid var(--line); border-left: 3px solid var(--soft); background: rgba(141, 151, 255, 0.06); padding: 12px 14px; border-radius: 8px; margin: 12px 0 18px; }
+  .note p:last-child { margin: 0; }
+  .demo { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin: 10px 0 18px; }
+  .demo canvas { width: 100%; height: 220px; display: block; }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 18px; font-size: 14px; }
+  th, td { text-align: left; vertical-align: top; padding: 9px 10px; border-bottom: 1px solid var(--line); }
+  th { font: 500 11px "Geist Mono", monospace; letter-spacing: 0.06em; text-transform: uppercase; color: var(--mute); }
+  td:first-child { white-space: nowrap; }
+  td { color: #c8c4bc; }
+  .tablewrap { overflow-x: auto; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 18px; }
+  .chips span { font: 12px "Geist Mono", monospace; padding: 4px 8px; border: 1px solid var(--line); border-radius: 999px; color: #c8c4bc; }
+  .sw { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: -2px; margin-right: 6px; border: 1px solid rgba(255,255,255,.15); }
+  .cards { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(min(230px, 100%), 1fr)); margin: 12px 0 18px; }
+  .cards a { display: block; padding: 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); text-decoration: none; color: var(--paper); }
+  .cards a:hover { border-color: var(--soft); }
+  .cards b { display: block; font-weight: 500; margin-bottom: 2px; }
+  .cards span { color: var(--mute); font-size: 14px; }
+</style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="side" aria-label="On this page">
+      <span class="label">Get started</span>
+      <a href="#intro">Introduction</a>
+      <a href="#requirements">Requirements</a>
+      <a href="#install">Installation</a>
+      <a href="#quick-start">Quick start</a>
+      <span class="label">Guides</span>
+      <a href="#frameworks">Frameworks</a>
+      <a href="#icons">Icons</a>
+      <a href="#custom">Your own icons</a>
+      <a href="#looks">Looks and motion</a>
+      <a href="#scroll">Scroll and interaction</a>
+      <span class="label">Reference</span>
+      <a href="#options">Options</a>
+      <a href="#api">API</a>
+      <a href="#a11y">Accessibility</a>
+      <a href="#performance">Performance</a>
+      <a href="#claude">Use with Claude</a>
+      <a href="#troubleshooting">Troubleshooting</a>
+      <a href="#license">Licence and credits</a>
+    </nav>
+
+    <main>
+      <section id="intro">
+        <p class="label" style="color:var(--soft)">Documentation</p>
+        <h1>Get started</h1>
+        <p class="lead">Cube Icons turns small pixel drawings into 3D cubes that fly in, settle and fly apart. It's one script with no dependencies: add it to a page, give it a canvas, and name an icon.</p>
+        <div class="demo"><canvas id="introCv" aria-label="A rocket built from cubes"></canvas><div class="tabs" id="introIcons" style="flex-direction:column"></div></div>
+        <p>It comes with 61 icons, eleven looks, twenty-eight recipes, a scroll mode, an editor that also turns images into icons, and a Claude skill. It works in any website: plain HTML, React, Vue, Framer, Webflow or WordPress.</p>
+      </section>
+
+      <section id="requirements">
+        <h2>Requirements</h2>
+        <ul>
+          <li><b>A web page you can add a script to.</b> No build step, no npm, no framework required.</li>
+          <li><b>A current browser:</b> Chrome, Edge, Firefox or Safari from the last few years. It uses a plain 2D canvas, not WebGL.</li>
+          <li><b>Nothing else.</b> No account, no API key, and nothing is sent anywhere: everything runs in the visitor's browser.</li>
+        </ul>
+        <p>The engine is about 9 KB gzipped, and the icon library about 3 KB.</p>
+      </section>
+
+      <section id="install">
+        <h2>Installation</h2>
+        <p>Pick one. Both give you the same two files: <code>icons.js</code> (the icon library) and <code>cubes.js</code> (the engine).</p>
+        <div class="tabs" role="tablist" data-tabs="install">
+          <button role="tab" aria-selected="true" aria-controls="install-cdn" id="t-cdn">CDN</button>
+          <button role="tab" aria-selected="false" aria-controls="install-download" id="t-download">Download</button>
+        </div>
+        <div role="tabpanel" id="install-cdn" aria-labelledby="t-cdn">
+          <p style="margin-top:12px">Add these before the closing <code>&lt;/body&gt;</code> tag. The version in the URL is pinned, so an update never changes your site by surprise.</p>
+          <pre data-copy><code>&lt;script src="{{cdn}}icons.js"&gt;&lt;/script&gt;
+&lt;script src="{{cdn}}cubes.js"&gt;&lt;/script&gt;</code></pre>
+        </div>
+        <div role="tabpanel" id="install-download" aria-labelledby="t-download" hidden>
+          <p style="margin-top:12px">Download both files, put them next to your page, and link them. This works offline and with strict content security policies.</p>
+          <p><a href="icons.js" download>Download icons.js</a> · <a href="cubes.js" download>Download cubes.js</a></p>
+          <pre data-copy><code>&lt;script src="icons.js"&gt;&lt;/script&gt;
+&lt;script src="cubes.js"&gt;&lt;/script&gt;</code></pre>
+        </div>
+        <div class="note"><p>Only drawing your own icons, or using <code>CubeIcons.text()</code>? You can skip <code>icons.js</code> and pass your rows straight to <code>show()</code>.</p></div>
+      </section>
+
+      <section id="quick-start">
+        <h2>Quick start</h2>
+        <div class="steps">
+          <div class="step">
+            <h3>Add the scripts</h3>
+            <p>From <a href="#install">Installation</a>, above.</p>
+          </div>
+          <div class="step">
+            <h3>Add a canvas with a size</h3>
+            <p>The canvas needs a width and height in CSS. The icon scales to fit it.</p>
+            <pre data-copy><code>&lt;canvas id="hero-icon" style="width:360px;height:280px" aria-label="A rocket"&gt;&lt;/canvas&gt;</code></pre>
+          </div>
+          <div class="step">
+            <h3>Build an icon</h3>
+            <p>Make a stage on the canvas and show an icon by name.</p>
+            <pre data-copy><code>&lt;script&gt;
+  const stage = CubeIcons.stage(document.getElementById("hero-icon"), { look: "soft" });
+  stage.show("rocket");
+&lt;/script&gt;</code></pre>
+          </div>
+        </div>
+        <p>That's all. Here is the whole page in one block, ready to save as an <code>.html</code> file and open:</p>
+        <pre data-copy><code>&lt;!doctype html&gt;
+&lt;html lang="en"&gt;
+&lt;body style="margin:0;display:grid;place-items:center;min-height:100vh;background:#efe9df"&gt;
+  &lt;canvas id="hero-icon" style="width:360px;height:280px" aria-label="A rocket"&gt;&lt;/canvas&gt;
+
+  &lt;script src="{{cdn}}icons.js"&gt;&lt;/script&gt;
+  &lt;script src="{{cdn}}cubes.js"&gt;&lt;/script&gt;
+  &lt;script&gt;
+    const stage = CubeIcons.stage(document.getElementById("hero-icon"), { look: "soft" });
+    stage.show("rocket");
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <p>Next, shape it in <a href="index.html">the playground</a>: every setting is there, and its code box gives you the matching line to paste. <a href="examples.html">The recipes</a> show twenty-eight common uses.</p>
+      </section>
+
+      <section id="frameworks">
+        <h2>Frameworks</h2>
+        <p>The engine is a plain script that adds <code>window.CubeIcons</code>. In a framework, load it once in the browser, then make a stage when your component mounts and destroy it when it unmounts. This small loader does the first part and works everywhere:</p>
+        <pre data-copy><code>// cube-icons.js: loads the two scripts once, in order, and resolves with window.CubeIcons
+const BASE = "{{cdn}}";
+let loading;
+export function loadCubeIcons() {
+  if (window.CubeIcons) return Promise.resolve(window.CubeIcons);
+  loading ??= Promise.all(["icons.js", "cubes.js"].map((file) => new Promise((resolve, reject) => {
+    const s = document.createElement("script");
+    s.src = BASE + file; s.async = false; s.onload = resolve; s.onerror = reject;
+    document.head.append(s);
+  }))).then(() => window.CubeIcons);
+  return loading;
+}</code></pre>
+        <div class="tabs" role="tablist" data-tabs="fw">
+          <button role="tab" aria-selected="true" aria-controls="fw-react" id="t-react">React / Next.js</button>
+          <button role="tab" aria-selected="false" aria-controls="fw-vue" id="t-vue">Vue / Nuxt</button>
+          <button role="tab" aria-selected="false" aria-controls="fw-svelte" id="t-svelte">Svelte</button>
+          <button role="tab" aria-selected="false" aria-controls="fw-framer" id="t-framer">Framer</button>
+          <button role="tab" aria-selected="false" aria-controls="fw-webflow" id="t-webflow">Webflow</button>
+          <button role="tab" aria-selected="false" aria-controls="fw-wp" id="t-wp">WordPress</button>
+        </div>
+        <div role="tabpanel" id="fw-react" aria-labelledby="t-react">
+          <pre data-copy><code>"use client"; // Next.js App Router: this runs in the browser only
+import { useEffect, useRef } from "react";
+import { loadCubeIcons } from "./cube-icons";
+
+export function CubeIcon({ icon = "rocket", options = {}, label, style }) {
+  const ref = useRef(null);
+  const opts = JSON.stringify(options);
+  useEffect(() => {
+    let stage, cancelled = false;
+    loadCubeIcons().then((CubeIcons) => {
+      if (cancelled) return;
+      stage = CubeIcons.stage(ref.current, JSON.parse(opts));
+      stage.show(icon);
+    });
+    return () => { cancelled = true; stage?.destroy(); };
+  }, [icon, opts]);
+  return &lt;canvas ref={ref} role="img" aria-label={label ?? icon} style={{ width: "100%", height: 280, ...style }} /&gt;;
+}
+
+// &lt;CubeIcon icon="trophy" options={{ look: "soft" }} /&gt;</code></pre>
+        </div>
+        <div role="tabpanel" id="fw-vue" aria-labelledby="t-vue" hidden>
+          <pre data-copy><code>&lt;script setup&gt;
+import { onMounted, onBeforeUnmount, ref } from "vue";
+import { loadCubeIcons } from "./cube-icons";
+
+const props = defineProps({ icon: { type: String, default: "rocket" }, options: Object, label: String });
+const el = ref(null);
+let stage;
+onMounted(async () =&gt; {
+  const CubeIcons = await loadCubeIcons();
+  stage = CubeIcons.stage(el.value, props.options);
+  stage.show(props.icon);
+});
+onBeforeUnmount(() =&gt; stage?.destroy());
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;canvas ref="el" role="img" :aria-label="label ?? icon" style="width:100%;height:280px" /&gt;
+&lt;/template&gt;</code></pre>
+          <p>In Nuxt, wrap it in <code>&lt;ClientOnly&gt;</code>.</p>
+        </div>
+        <div role="tabpanel" id="fw-svelte" aria-labelledby="t-svelte" hidden>
+          <pre data-copy><code>&lt;script&gt;
+  import { onMount } from "svelte";
+  import { loadCubeIcons } from "./cube-icons";
+  export let icon = "rocket", options = {}, label = icon;
+  let el;
+  onMount(() =&gt; {
+    let stage;
+    loadCubeIcons().then((CubeIcons) =&gt; { stage = CubeIcons.stage(el, options); stage.show(icon); });
+    return () =&gt; stage?.destroy();
+  });
+&lt;/script&gt;
+
+&lt;canvas bind:this={el} role="img" aria-label={label} style="width:100%;height:280px"&gt;&lt;/canvas&gt;</code></pre>
+        </div>
+        <div role="tabpanel" id="fw-framer" aria-labelledby="t-framer" hidden>
+          <p style="margin-top:12px">Add an <b>Embed</b> (Insert → Utility → Embed), set it to <b>HTML</b>, and paste a complete snippet. The <a href="editor.html">editor</a>'s "Drop-in snippet" gives you one for any icon, including your own.</p>
+          <pre data-copy><code>&lt;canvas id="cube" style="width:100%;height:100%" aria-label="A rocket"&gt;&lt;/canvas&gt;
+&lt;script src="{{cdn}}icons.js"&gt;&lt;/script&gt;
+&lt;script src="{{cdn}}cubes.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  CubeIcons.stage(document.getElementById("cube"), { look: "soft" }).show("rocket");
+&lt;/script&gt;</code></pre>
+          <p>For a reusable Framer code component, use the React tab: Framer code components are React.</p>
+        </div>
+        <div role="tabpanel" id="fw-webflow" aria-labelledby="t-webflow" hidden>
+          <p style="margin-top:12px">Add the two script tags under <b>Page settings → Custom code → Before &lt;/body&gt; tag</b> (or Site settings, for every page). Then drop an <b>Embed</b> element where the icon goes:</p>
+          <pre data-copy><code>&lt;canvas id="cube" style="width:100%;height:280px" aria-label="A rocket"&gt;&lt;/canvas&gt;
+&lt;script&gt;
+  addEventListener("load", () =&gt; CubeIcons.stage(document.getElementById("cube")).show("rocket"));
+&lt;/script&gt;</code></pre>
+        </div>
+        <div role="tabpanel" id="fw-wp" aria-labelledby="t-wp" hidden>
+          <p style="margin-top:12px">Add a <b>Custom HTML</b> block and paste a complete snippet (canvas, scripts and the call). Some security plugins strip scripts from posts; if so, add the two script tags through your theme's footer settings or a header-and-footer plugin instead.</p>
+          <pre data-copy><code>&lt;canvas id="cube" style="width:100%;height:280px" aria-label="A rocket"&gt;&lt;/canvas&gt;
+&lt;script src="{{cdn}}icons.js"&gt;&lt;/script&gt;
+&lt;script src="{{cdn}}cubes.js"&gt;&lt;/script&gt;
+&lt;script&gt;CubeIcons.stage(document.getElementById("cube")).show("rocket");&lt;/script&gt;</code></pre>
+        </div>
+      </section>
+
+      <section id="icons">
+        <h2>Icons</h2>
+        <p>Show any of these by name. They're all in <code>icons.js</code>; see them built in <a href="index.html">the playground</a>.</p>
+        <div class="chips" id="iconNames"></div>
+        <p>An icon is just rows of text, read top to bottom as you'd draw it. Each character is a colour from the palette and <code>.</code> is empty. Every coloured cell becomes a short stack of cubes, <code>depth</code> deep.</p>
+        <pre><code>heart: [
+  ".RR...RR.",
+  "RRRR.RRRR",
+  "RRRRRRRRR",
+  ".RRRRRRR.",
+  "..RRRRR..",
+  "...RRR...",
+  "....R....",
+],</code></pre>
+        <div class="tablewrap"><table><thead><tr><th>Key</th><th>Colour</th><th>Key</th><th>Colour</th></tr></thead><tbody id="paletteTable"></tbody></table></div>
+      </section>
+
+      <section id="custom">
+        <h2>Your own icons</h2>
+        <h3>Draw one, or start from an image</h3>
+        <p>Open <a href="editor.html">the editor</a>. Paint cell by cell, or drop a PNG, JPG or SVG on the grid (or paste one). The background is removed, the image's own main colours are found (or snapped to the built-in palette, if you prefer), and each cell takes the colour most of its pixels share. Width (up to 48 cells), number of colours and detail are adjustable. Logos, emoji, stickers and flat illustrations convert best. The image never leaves your browser.</p>
+        <p>Then keep it: <b>Save to My icons</b> (stored in your browser and shown in the playground), download a <b>PNG</b> in the preview's look, a <b>.js file</b> to load after <code>icons.js</code>, or <b>JSON</b>; or copy an <code>icons.js</code> entry or a complete drop-in snippet.</p>
+        <h3>Use it</h3>
+        <p>Pass the rows straight to <code>show()</code>, or add them to the library and use them by name:</p>
+        <pre data-copy><code>// straight in
+stage.show(["..BB..", ".BBBB.", "BBBBBB", ".W..W."]);
+
+// or by name, anywhere after icons.js
+Object.assign(window.CUBE_ICONS, { badge: ["..BB..", ".BBBB.", "BBBBBB", ".W..W."] });
+stage.show("badge");</code></pre>
+        <h3>Icons with their own colours</h3>
+        <p>An icon can bring colours of its own: give it <code>colors</code> with extra keys (lowercase letters by convention), and use those keys in its rows. Images imported in the editor come out this way.</p>
+        <pre data-copy><code>stage.show({
+  colors: { a: "#eb234f", b: "#79a93e" },
+  rows: ["..aa..", ".aaaa.", "bbbbbb"],
+});</code></pre>
+        <h3>Words</h3>
+        <p><code>CubeIcons.text()</code> turns a word into rows with a built-in 5-row pixel font (A–Z, 0–9 and <code>. , : ! ? - + ' &amp; /</code>; <code>\n</code> starts a new line).</p>
+        <pre data-copy><code>stage.show(CubeIcons.text("Hello", { color: "R" }));</code></pre>
+        <h3>Drawing icons that read well</h3>
+        <ul>
+          <li>Keep them 8–16 cells wide. Bigger loses the chunky look, and each stage holds 900 cubes (cells × depth) unless you raise <code>max</code>.</li>
+          <li>Outline objects in one colour and fill with another; one accent detail (a gold clasp, a red flag) makes them read.</li>
+          <li>The front view suits detailed icons; isometric suits simple solid shapes.</li>
+        </ul>
+      </section>
+
+      <section id="looks">
+        <h2>Looks and motion</h2>
+        <p>Change the look with one option. All eleven work with every icon, view and colour:</p>
+        <div class="tablewrap"><table><thead><tr><th>Look</th><th>What it is</th><th>Best on</th></tr></thead><tbody>
+          <tr><td><code>flat</code></td><td>Three clean shades per cube. The default.</td><td>Anything</td></tr>
+          <tr><td><code>soft</code></td><td>Bevelled edges, warm light, cool shade and a shadow underneath.</td><td>Light pages</td></tr>
+          <tr><td><code>clay</code></td><td>Pastel and matte, with rounded faces and a shadow.</td><td>Light pages</td></tr>
+          <tr><td><code>candy</code></td><td>Saturated and glossy, with a highlight on every cube.</td><td>Light pages</td></tr>
+          <tr><td><code>paper</code></td><td>Flat cut-outs with a drop shadow, like layered card.</td><td>Light pages</td></tr>
+          <tr><td><code>outline</code></td><td>A dark edge round every face, like a comic.</td><td>Light pages</td></tr>
+          <tr><td><code>pixel</code></td><td>Flat 2D pixel art: the front layer only.</td><td>Anything</td></tr>
+          <tr><td><code>glass</code></td><td>See-through faces with bright edges.</td><td>Dark pages</td></tr>
+          <tr><td><code>neon</code></td><td>Dark bodies with glowing edges.</td><td>Dark pages</td></tr>
+          <tr><td><code>wire</code></td><td>Edges only, like a blueprint. Pair it with <code>tint</code>.</td><td>Dark or coloured pages</td></tr>
+          <tr><td><code>holo</code></td><td>A rainbow that shifts across the icon, and while it flies.</td><td>Dark pages</td></tr>
+        </tbody></table></div>
+        <p>Motion is timed by the clock, so it looks the same on every screen. Each cube flies for <code>duration</code> ms along an <code>ease</code> curve, after a random delay of up to <code>stagger</code> ms, turning by up to <code>spin</code> on the way and always landing square. The default curve, <code>expo</code>, starts fast and lands softly; <code>back</code> and <code>elastic</code> overshoot for a playful feel.</p>
+        <pre data-copy><code>CubeIcons.stage(canvas, { look: "clay", ease: "back", duration: 900, stagger: 400, spin: 0.5 });</code></pre>
+        <p>One-ink brand colour: <code>tint</code> redraws every icon in shades of your colour, keeping light parts light. To change single colours instead, pass a palette: <code>{ palette: { ...CubeIcons.PALETTE, B: "#ff4d8d" } }</code>.</p>
+      </section>
+
+      <section id="scroll">
+        <h2>Scroll and interaction</h2>
+        <pre data-copy><code>// build as the canvas scrolls to the middle of the screen, come apart as it leaves
+CubeIcons.scroll(stage, "rocket");
+// or fly the whole icon in once half of it is in view
+CubeIcons.scroll(stage, "rocket", { mode: "trigger" });
+
+// one icon after another
+CubeIcons.sequence(stage, ["home", "bag", "gift"], { every: 2000 });
+
+// glowing cubes that drift across the section, then gather into an icon
+stage.set({ tint: "#3cff3c", glow: 0.8, float: 0.7 });
+stage.scatter(140, { icon: "bolt" });
+button.addEventListener("click", () =&gt; stage.show("bolt"));
+
+// a transition: the icon bursts toward you
+stage.burst();
+
+// knock the cubes loose from the click point; they settle back
+canvas.addEventListener("click", (e) =&gt; stage.explode(e.clientX, e.clientY));
+
+// a menu: build on hover, fly apart on leave
+link.addEventListener("pointerenter", () =&gt; stage.show("briefcase"));
+menu.addEventListener("pointerleave", () =&gt; stage.clear());</code></pre>
+        <div class="cards">
+          <a href="examples.html"><b>Recipes</b><span>Twenty-eight working examples with their code.</span></a>
+          <a href="index.html"><b>Playground</b><span>Every option, nine presets, and the code to copy.</span></a>
+          <a href="editor.html"><b>Editor</b><span>Draw icons, or turn images into them.</span></a>
+        </div>
+      </section>
+
+      <section id="options">
+        <h2>Options</h2>
+        <p>Pass any of these to <code>CubeIcons.stage(canvas, options)</code> or <code>CubeIcons.still()</code>, or change them later with <code>stage.set()</code>. <code>CubeIcons.DEFAULTS</code> holds the defaults.</p>
+        <div class="tablewrap"><table><thead><tr><th>Option</th><th>Default</th><th>What it does</th></tr></thead><tbody>
+          <tr><td><code>look</code></td><td><code>"flat"</code></td><td>One of <code>CubeIcons.LOOKS</code>: flat, soft, clay, candy, paper, outline, pixel, glass, neon, wire, holo.</td></tr>
+          <tr><td><code>view</code></td><td><code>"front"</code></td><td><code>"front"</code> (square-on, depth as a slanted side) or <code>"iso"</code>.</td></tr>
+          <tr><td><code>depth</code></td><td><code>2</code></td><td>Cubes deep, 1–5.</td></tr>
+          <tr><td><code>gap</code></td><td><code>0</code></td><td>Space between cubes, 0–0.4 of a cube.</td></tr>
+          <tr><td><code>tint</code></td><td><code>null</code></td><td>One ink: every colour redrawn in shades of this one, e.g. <code>"#2f3cff"</code>.</td></tr>
+          <tr><td><code>palette</code></td><td><code>PALETTE</code></td><td>Colours by key, as <code>rgb()</code> or hex.</td></tr>
+          <tr><td><code>shadow</code></td><td>on for soft, clay and candy</td><td>A soft contact shadow under the icon. <code>true</code> or <code>false</code> to force it.</td></tr>
+          <tr><td><code>duration</code></td><td><code>700</code></td><td>Ms each cube takes to reach its spot.</td></tr>
+          <tr><td><code>ease</code></td><td><code>"expo"</code></td><td>One of <code>CubeIcons.EASES</code>: expo, cubic, back, elastic, linear.</td></tr>
+          <tr><td><code>stagger</code></td><td><code>260</code></td><td>Up to this many ms of random delay per cube.</td></tr>
+          <tr><td><code>spin</code></td><td><code>0.25</code></td><td>How far cubes turn while flying, in turns. 0 for none.</td></tr>
+          <tr><td><code>from</code></td><td><code>"auto"</code></td><td>Where hidden cubes fly in from: below, above, left, right or center.</td></tr>
+          <tr><td><code>magnet</code></td><td><code>0</code></td><td>How far cubes near the pointer pop toward you, in cubes (try 1.5).</td></tr>
+          <tr><td><code>glow</code></td><td><code>0</code></td><td>Bloom: soft light around the cubes, 0–1. Lovely with <code>tint</code> on a dark page. Neon glows by default.</td></tr>
+          <tr><td><code>float</code></td><td><code>0</code></td><td>Idle motion, 0–1: the built icon sways and bobs; loose cubes from <code>scatter()</code> drift.</td></tr>
+          <tr><td><code>tilt</code></td><td><code>true</code></td><td>The depth leans with the mouse.</td></tr>
+          <tr><td><code>size</code></td><td><code>"auto"</code></td><td>Pixels per cube, or fit the canvas.</td></tr>
+          <tr><td><code>x</code>, <code>y</code></td><td><code>0.5</code></td><td>Where the icon sits in the canvas, 0–1.</td></tr>
+          <tr><td><code>max</code></td><td><code>900</code></td><td>How many cubes the stage holds.</td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section id="api">
+        <h2>API</h2>
+        <h3>Stage</h3>
+        <div class="tablewrap"><table><thead><tr><th>Call</th><th>What it does</th></tr></thead><tbody>
+          <tr><td><code>CubeIcons.stage(canvas, options)</code></td><td>Makes a stage on a canvas and returns it.</td></tr>
+          <tr><td><code>stage.show(icon)</code></td><td>Flies the cubes in to build an icon: a name, or an array of rows. Showing another icon morphs into it.</td></tr>
+          <tr><td><code>stage.clear()</code></td><td>Flies the cubes apart and fades them out.</td></tr>
+          <tr><td><code>stage.build(icon, progress)</code></td><td>Builds part of an icon, 0 (scattered) to 1 (whole), bottom row first. Drive it from anything: a scroll, a timer, an upload.</td></tr>
+          <tr><td><code>stage.explode(x?, y?, force?)</code></td><td>Knocks the cubes away from a page point (or the middle); they settle back.</td></tr>
+          <tr><td><code>stage.burst({ force, dur })</code></td><td>The cubes rush toward you, growing and fading. A page or menu transition; nothing is left showing.</td></tr>
+          <tr><td><code>stage.scatter(count, { icon, color, alpha, size })</code></td><td>Loose cubes spread across the canvas (they drift with <code>float</code>). A following <code>show()</code> gathers them into the icon.</td></tr>
+          <tr><td><code>stage.set(options)</code></td><td>Changes options live.</td></tr>
+          <tr><td><code>stage.options</code></td><td>The current options.</td></tr>
+          <tr><td><code>stage.destroy()</code></td><td>Stops it and removes its listeners. Call it when you remove the canvas.</td></tr>
+        </tbody></table></div>
+        <h3>Helpers</h3>
+        <div class="tablewrap"><table><thead><tr><th>Call</th><th>What it does</th></tr></thead><tbody>
+          <tr><td><code>CubeIcons.scroll(stage, icon, { mode, target, hold, range })</code></td><td>Ties a stage to the scroll. <code>mode</code> is <code>"scrub"</code> (default) or <code>"trigger"</code>. Returns <code>{ destroy }</code>.</td></tr>
+          <tr><td><code>CubeIcons.sequence(stage, icons, { every })</code></td><td>Shows icons one after another, every <code>every</code> ms (2000). Returns <code>{ destroy }</code>.</td></tr>
+          <tr><td><code>CubeIcons.text(str, { color, spacing, line })</code></td><td>Returns rows for a word in the built-in pixel font.</td></tr>
+          <tr><td><code>CubeIcons.still(canvas, icon, options)</code></td><td>Draws an icon once, settled, with no animation. Good for thumbnails.</td></tr>
+          <tr><td><code>CubeIcons.voxels(icon, depth, palette)</code></td><td>The cube positions and colours for an icon, if you want to render them yourself.</td></tr>
+          <tr><td><code>PALETTE</code>, <code>DEFAULTS</code>, <code>LOOKS</code>, <code>EASES</code>, <code>version</code></td><td>The built-in values, for building your own controls.</td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section id="a11y">
+        <h2>Accessibility</h2>
+        <ul>
+          <li><b>Reduced motion is respected.</b> When a visitor's system asks for less motion, icons appear in place with no flight, spin or stagger.</li>
+          <li><b>Label meaningful icons:</b> add <code>role="img"</code> and an <code>aria-label</code> to the canvas. Mark decorative ones with <code>aria-hidden="true"</code>.</li>
+          <li><b>Don't rely on the canvas alone</b> for anything a visitor needs: keep the real text (a menu link, a button label) in HTML next to it.</li>
+          <li>Hover effects should also run on keyboard focus; the recipes show how.</li>
+        </ul>
+      </section>
+
+      <section id="performance">
+        <h2>Performance</h2>
+        <ul>
+          <li>A stage only draws while cubes move, when the pointer moves (for tilt and magnet) and when the canvas resizes. A settled icon costs nothing.</li>
+          <li>It pauses while the canvas is scrolled out of view, and carries on when it returns.</li>
+          <li>Sharpness is capped at 2× for high-density screens, which keeps big canvases fast.</li>
+          <li>Dozens of stages on one page are fine (<a href="examples.html">the recipes page</a> runs over twenty). Call <code>destroy()</code> on stages you remove.</li>
+        </ul>
+      </section>
+
+      <section id="claude">
+        <h2>Use with Claude</h2>
+        <p>Cube Icons comes with a free Claude skill. With it, Claude knows the engine, the icon format and the recipes, so you can ask for things like <i>"add a cube icon menu to my landing page"</i> or <i>"draw a coffee cup icon and put it in the empty state"</i>, and Claude writes the rows and the code.</p>
+        <div class="steps">
+          <div class="step"><h3>Get the skill</h3><p>Download the <code>skill/cube-icons</code> folder from <a class="repo" href="#">the GitHub repo</a> (it includes <code>SKILL.md</code> and the engine).</p></div>
+          <div class="step"><h3>Add it</h3><p><b>Claude Code:</b> copy the folder to <code>~/.claude/skills/cube-icons</code> (every project) or <code>.claude/skills/cube-icons</code> in one project. <b>Claude apps:</b> zip the folder and upload it under Settings → Capabilities → Skills.</p></div>
+          <div class="step"><h3>Ask</h3><p>Describe what you want. Claude uses the skill when the request fits.</p></div>
+        </div>
+      </section>
+
+      <section id="troubleshooting">
+        <h2>Troubleshooting</h2>
+        <h3>Nothing shows</h3>
+        <ul>
+          <li>Give the canvas a size in CSS (a width and a height). A canvas with no height is 0 pixels tall.</li>
+          <li>Check the browser console. A wrong icon name logs <code>there's no icon called "…"</code>.</li>
+          <li>Make sure <code>icons.js</code> loads before you call <code>show()</code> with a name.</li>
+        </ul>
+        <h3><code>CubeIcons is not defined</code></h3>
+        <p>Your code ran before <code>cubes.js</code> loaded. Put your script after the two script tags, or run it on <code>load</code>, or use the loader from <a href="#frameworks">Frameworks</a>.</p>
+        <h3>Part of the icon is missing</h3>
+        <p>It needs more cubes than the stage holds. The console says so; raise <code>max</code>, lower <code>depth</code>, or draw it smaller. The editor shows the count as you draw.</p>
+        <h3>Blocked by a content security policy</h3>
+        <p>Allow <code>https://cdn.jsdelivr.net</code> in <code>script-src</code>, or use the download install and serve the files yourself.</p>
+        <h3>Server-side rendering errors (<code>window is not defined</code>)</h3>
+        <p>The engine needs a browser. Load it inside an effect or mount hook, as in <a href="#frameworks">Frameworks</a>, never at the top of a server-rendered module.</p>
+      </section>
+
+      <section id="license">
+        <h2>Licence and credits</h2>
+        <p>Cube Icons is free and open source under the MIT licence: use it in personal and commercial projects, change it, and share it. Keep the licence notice in the files.</p>
+        <p>The idea of a cube swarm that builds an object per menu item was inspired by the menu on <a href="https://sparkk.fr">sparkk.fr</a>, an agency site built with WebGL and Blender-made shapes. Cube Icons is an independent take: a dependency-free 2D canvas engine that builds its shapes from pixel art.</p>
+        <p>Related work worth a look: <a href="https://github.com/meodai/heerich">heerich.js</a> (voxel scenes as SVG), <a href="https://github.com/crsolver/claude-pxl">claude-pxl</a> (pixel art sprites with Claude), and the Three.js voxel tutorials on <a href="https://tympanus.net/codrops/">Codrops</a>.</p>
+        <p>Want more icons, ready-made sections and framework components? <a href="pro.html">Cube Icons Pro</a> is coming.</p>
+      </section>
+    </main>
+  </div>
+
+<script src="icons.js"></script>
+<script src="cubes.js"></script>
+<script src="site.js"></script>
+<script>
+  const $ = (id) => document.getElementById(id);
+
+  // live intro demo
+  const intro = CubeIcons.stage($("introCv"), { look: "soft" });
+  const introIcons = ["rocket", "trophy", "heart", "gift", "robot"];
+  $("introIcons").innerHTML = introIcons.map((n, i) => `<button type="button" role="tab" aria-selected="${i === 0}" data-n="${n}">${n}</button>`).join("");
+  $("introIcons").addEventListener("click", (e) => { const n = e.target.dataset.n; if (!n) return; intro.show(n); $("introIcons").querySelectorAll("button").forEach((b) => b.setAttribute("aria-selected", b.dataset.n === n)); });
+  intro.show(introIcons[0]);
+
+  // tabs
+  document.querySelectorAll("[data-tabs]").forEach((list) => {
+    const tabs = [...list.querySelectorAll('[role="tab"]')];
+    const pick = (tab) => tabs.forEach((t) => { const on = t === tab; t.setAttribute("aria-selected", on); t.tabIndex = on ? 0 : -1; $(t.getAttribute("aria-controls")).hidden = !on; });
+    tabs.forEach((t, i) => {
+      t.addEventListener("click", () => pick(t));
+      t.addEventListener("keydown", (e) => { const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key]; if (d) { const n = tabs[(i + d + tabs.length) % tabs.length]; pick(n); n.focus(); } });
+    });
+    pick(tabs[0]);
+  });
+
+  // icon names and palette, from the library itself
+  $("iconNames").innerHTML = Object.keys(CUBE_ICONS).map((n) => `<span>${n}</span>`).join("");
+  const NAMES = { B: "cobalt", W: "paper", K: "grey", D: "dark", R: "red", O: "orange", Y: "yellow", G: "green", P: "lilac", C: "cyan", L: "light grey", M: "pink", N: "brown" };
+  const keys = Object.keys(CubeIcons.PALETTE), half = Math.ceil(keys.length / 2);
+  const cell = (k) => (k ? `<td><code>${k}</code></td><td><span class="sw" style="background:${CubeIcons.PALETTE[k]}"></span>${NAMES[k] || ""}</td>` : "<td></td><td></td>");
+  $("paletteTable").innerHTML = keys.slice(0, half).map((k, i) => `<tr>${cell(k)}${cell(keys[half + i])}</tr>`).join("");
+
+  document.querySelectorAll("a.repo").forEach((a) => (a.href = SITE.repo));
+
+  // highlight the section in view
+  const links = [...document.querySelectorAll(".side a")];
+  const io = new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) links.forEach((a) => a.classList.toggle("on", a.getAttribute("href") === `#${e.target.id}`)); }), { rootMargin: "-20% 0px -70% 0px" });
+  document.querySelectorAll("main section[id]").forEach((s) => io.observe(s));
+</script>
+</body>
+</html>

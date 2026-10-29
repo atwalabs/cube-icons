@@ -22,5 +22,8 @@
   ],
   "skills": [
     "./"
-  ]
+  ],
+  "documentationUrl": "https://cube-icons.attwa.me/docs.html#claude",
+  "supportUrl": "https://github.com/atwalabs/cube-icons/issues",
+  "privacyPolicyUrl": "https://cube-icons.attwa.me/privacy.html"
 }

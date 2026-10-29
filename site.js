@@ -87,7 +87,7 @@
 
   const foot = document.createElement("footer");
   foot.className = "site-foot";
-  foot.innerHTML = `<span>${SITE.name} v${version}</span><span>Free and open source, MIT licence</span><a href="docs.html">Docs</a><a href="${SITE.repo}">GitHub</a><a href="pro.html">Pro</a><a href="llms.txt">llms.txt</a><span>Inspired by the menu on <a href="https://sparkk.fr">sparkk.fr</a></span>`;
+  foot.innerHTML = `<span>${SITE.name} v${version}</span><span>Free and open source, MIT licence</span><a href="docs.html">Docs</a><a href="${SITE.repo}">GitHub</a><a href="pro.html">Pro</a><a href="llms.txt">llms.txt</a><a href="privacy.html">Privacy</a><span>Inspired by the menu on <a href="https://sparkk.fr">sparkk.fr</a></span>`;
   document.body.append(foot);
 
   // any <pre data-copy> gets a copy button; {{cdn}} in a code block becomes the CDN base URL

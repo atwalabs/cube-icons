@@ -1,6 +1,12 @@
 ---
 name: cube-icons
 description: Add animated pixel icons built from 3D cubes to a web page, using the dependency-free Cube Icons engine (a 2D canvas, no WebGL). Cubes fly in to build the icon, settle, and fly apart; there are 61 ready icons, eleven looks (flat, soft, clay, candy, paper, outline, pixel, glass, neon, wire, holo), scroll-driven building, explode, magnet and morph effects, and a pixel-text font. Use this when someone wants voxel, pixel, 3D-cube or "Minecraft-style" animated icons, a menu where hovering builds an object, an animated empty state, loader, hero or feature-card illustration, scroll-assembled visuals, or a small custom pixel icon drawn and dropped into a site. Works in plain HTML, React/Next.js, Vue, Svelte, Framer, Webflow and WordPress.
+license: MIT
+metadata:
+  author: Atwa
+  version: "1.0.0"
+  homepage: https://cube-icons.attwa.me
+  repository: https://github.com/atwalabs/cube-icons
 ---
 
 # Cube Icons

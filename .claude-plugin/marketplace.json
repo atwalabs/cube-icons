@@ -1,0 +1,15 @@
+{
+  "name": "cube-icons",
+  "owner": {
+    "name": "Atwa",
+    "url": "https://attwa.me"
+  },
+  "description": "Cube Icons: animated pixel icons built from 3D cubes, as a Claude Code plugin with one skill.",
+  "plugins": [
+    {
+      "name": "cube-icons",
+      "source": "./",
+      "description": "Animated pixel icons built from 3D cubes for any web page, with a skill that writes the code and draws new icons."
+    }
+  ]
+}

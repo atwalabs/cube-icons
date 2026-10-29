@@ -1,0 +1,40 @@
+# Cube Icons
+
+> Cube Icons is a free, open-source JavaScript library (MIT) for animated pixel icons built from 3D cubes. The cubes fly in, settle into an icon and fly apart again, on hover, on scroll or on cue. It is one script with no dependencies (about 9 KB gzipped, a plain 2D canvas, no WebGL) and works in any website: plain HTML, React, Next.js, Vue, Svelte, Framer, Webflow and WordPress.
+
+It ships 61 icons, a pixel-text font, 11 looks (flat, soft, clay, candy, paper, outline, pixel, glass, neon, wire, holo) with glow and float, and effects such as hover menus, scroll-built sections, explode, magnet, morph sequences and bursts. Custom icons are rows of palette characters, drawn by hand, in the online editor, or converted from an image. A Claude skill teaches AI assistants to add it to a page.
+
+Install from the CDN, `icons.js` first:
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/atwalabs/cube-icons@1.0.0/icons.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/atwalabs/cube-icons@1.0.0/cubes.js"></script>
+<script>
+  const stage = CubeIcons.stage(document.querySelector("canvas"), { look: "soft" });
+  stage.show("rocket");
+</script>
+```
+
+## Docs
+
+- [Documentation](https://cube-icons.attwa.me/docs.html): install, quick start, frameworks, every option and the full API
+- [Full reference for AI tools](https://cube-icons.attwa.me/llms-full.txt): the skill, API and recipes as one Markdown file
+- [API reference](https://cube-icons.attwa.me/skill/cube-icons/references/api.md): options, stage methods and helpers
+- [Recipes](https://cube-icons.attwa.me/skill/cube-icons/references/recipes.md): working code for menus, buttons, loaders, scroll and more
+
+## Claude skill
+
+- [SKILL.md](https://cube-icons.attwa.me/skill/cube-icons/SKILL.md): the Agent Skill that teaches an AI assistant to add Cube Icons to a page and draw new icons
+- Install in Claude Code: `/plugin marketplace add atwalabs/cube-icons`, then `/plugin install cube-icons@cube-icons`
+- Install in any agent with the skills CLI: `npx skills add atwalabs/cube-icons`
+
+## Tools
+
+- [Playground](https://cube-icons.attwa.me/): every option and preset, with the code to copy
+- [Recipes](https://cube-icons.attwa.me/examples.html): 28 live examples, each with its code
+- [Editor](https://cube-icons.attwa.me/editor.html): paint an icon or convert an image, then save, download or copy it
+
+## Optional
+
+- [Source code](https://github.com/atwalabs/cube-icons): GitHub repository, MIT licence
+- [Cube Icons Pro](https://cube-icons.attwa.me/pro.html): upcoming paid tier with ready-made sections and 300+ icons, for a one-time payment

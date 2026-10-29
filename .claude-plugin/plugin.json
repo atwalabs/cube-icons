@@ -1,0 +1,11 @@
+{
+  "name": "cube-icons",
+  "displayName": "Cube Icons",
+  "description": "A skill that adds animated pixel icons built from 3D cubes to any web page, and draws new icons: hover menus, scroll-built sections, loaders, empty states and pixel text. One dependency-free script.",
+  "author": { "name": "Atwa", "url": "https://attwa.me" },
+  "homepage": "https://cube-icons.attwa.me",
+  "repository": "https://github.com/atwalabs/cube-icons",
+  "license": "MIT",
+  "keywords": ["icons", "animation", "pixel-art", "voxel", "3d", "canvas", "web-design", "frontend"],
+  "skills": ["./skill/"]
+}

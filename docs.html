@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cube Icons Docs</title>
-<meta name="description" content="Install Cube Icons in two minutes: animated pixel icons built from 3D cubes, with no dependencies.">
+<title>Cube Icons Docs: Install, API and Framework Guides</title>
+<meta name="description" content="Install Cube Icons in two minutes and learn every option: animated 3D pixel icons for HTML, React, Next.js, Vue, Svelte, Framer, Webflow and WordPress, plus a Claude skill.">
 <link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/brand/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
@@ -12,14 +12,36 @@
 <link rel="canonical" href="https://cube-icons.attwa.me/docs.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Cube Icons">
-<meta property="og:title" content="Cube Icons Docs">
-<meta property="og:description" content="Install Cube Icons in two minutes: animated pixel icons built from 3D cubes, with no dependencies.">
+<meta property="og:title" content="Cube Icons Docs: Install, API and Framework Guides">
+<meta property="og:description" content="Install Cube Icons in two minutes and learn every option: animated 3D pixel icons for HTML, React, Next.js, Vue, Svelte, Framer, Webflow and WordPress, plus a Claude skill.">
 <meta property="og:url" content="https://cube-icons.attwa.me/docs.html">
 <meta property="og:image" content="https://cube-icons.attwa.me/assets/brand/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Cube Icons: a rocket and a heart built from 3D cubes, next to the words Pixel icons, built from cubes.">
 <meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "TechArticle",
+ "headline": "Cube Icons documentation",
+ "url": "https://cube-icons.attwa.me/docs.html",
+ "description": "Install Cube Icons in two minutes and learn every option: animated 3D pixel icons for HTML, React, Next.js, Vue, Svelte, Framer, Webflow and WordPress, plus a Claude skill.",
+ "proficiencyLevel": "Beginner",
+ "about": {
+  "@type": "SoftwareApplication",
+  "name": "Cube Icons",
+  "url": "https://cube-icons.attwa.me/"
+ },
+ "author": {
+  "@type": "Person",
+  "@id": "https://attwa.me/#person",
+  "name": "Atwa",
+  "url": "https://attwa.me"
+ },
+ "image": "https://cube-icons.attwa.me/assets/brand/og.png"
+}
+</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500&family=Geist+Mono:wght@400;500&display=swap">
 <style>
   :root { --ink: #0e0e10; --panel: #151518; --paper: #f1efea; --mute: #8f8b83; --line: #2a2a2e; --accent: #2f3cff; --soft: #8d97ff; color-scheme: dark; }
@@ -464,12 +486,13 @@ menu.addEventListener("pointerleave", () =&gt; stage.clear());</code></pre>
 
       <section id="claude">
         <h2>Use with Claude</h2>
-        <p>Cube Icons comes with a free Claude skill. With it, Claude knows the engine, the icon format and the recipes, so you can ask for things like <i>"add a cube icon menu to my landing page"</i> or <i>"draw a coffee cup icon and put it in the empty state"</i>, and Claude writes the rows and the code.</p>
+        <p>Cube Icons comes with a free Agent Skill for Claude and other AI coding assistants. With it, Claude knows the engine, the icon format and the recipes, so you can ask for things like <i>"add a cube icon menu to my landing page"</i> or <i>"draw a coffee cup icon and put it in the empty state"</i>, and Claude writes the rows and the code.</p>
         <div class="steps">
-          <div class="step"><h3>Get the skill</h3><p>Download the <code>skill/cube-icons</code> folder from <a class="repo" href="#">the GitHub repo</a> (it includes <code>SKILL.md</code> and the engine).</p></div>
-          <div class="step"><h3>Add it</h3><p><b>Claude Code:</b> copy the folder to <code>~/.claude/skills/cube-icons</code> (every project) or <code>.claude/skills/cube-icons</code> in one project. <b>Claude apps:</b> zip the folder and upload it under Settings → Capabilities → Skills.</p></div>
+          <div class="step"><h3>Install it</h3><p><b>Claude Code:</b> run <code>/plugin marketplace add atwalabs/cube-icons</code>, then <code>/plugin install cube-icons@cube-icons</code>. <b>Cursor, Codex, Gemini CLI and other agents:</b> run <code>npx skills add atwalabs/cube-icons</code> in your project.</p></div>
+          <div class="step"><h3>Or add it by hand</h3><p>Download the <code>skill/cube-icons</code> folder from <a class="repo" href="#">the GitHub repo</a> (it includes <code>SKILL.md</code> and the engine). <b>Claude Code:</b> copy it to <code>~/.claude/skills/cube-icons</code>. <b>Claude apps:</b> zip the folder and upload it under Settings → Capabilities → Skills.</p></div>
           <div class="step"><h3>Ask</h3><p>Describe what you want. Claude uses the skill when the request fits.</p></div>
         </div>
+        <p>AI tools that read websites can also use <a href="llms.txt">llms.txt</a>, or <a href="llms-full.txt">llms-full.txt</a> for the whole skill, API and recipes in one file.</p>
       </section>
 
       <section id="troubleshooting">

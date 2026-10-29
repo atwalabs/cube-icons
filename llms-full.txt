@@ -1,0 +1,458 @@
+# Cube Icons: full reference for AI tools
+
+> Everything an AI assistant needs to add Cube Icons to a web page: the Claude skill's instructions, the API and the recipes. Site: https://cube-icons.attwa.me. Source: https://github.com/atwalabs/cube-icons (MIT).
+
+# Cube Icons
+
+Cube Icons renders small pixel drawings as 3D cubes on a `<canvas>`. Each coloured pixel becomes a short stack of cubes. The engine is `assets/cubes.js` (about 9 KB gzipped, no dependencies) and the icon library is `assets/icons.js`. Everything runs in the browser.
+
+## Workflow
+
+1. **Place it.** Decide what the icon does: builds on hover (menus, buttons, cards), builds on scroll (sections, heroes), shows once (empty states, loaders), or follows the pointer (magnet). Keep the real text in HTML next to the canvas.
+2. **Install.** Copy `assets/cubes.js` and `assets/icons.js` into the project's static folder and load them with two `<script>` tags, `icons.js` first. Or load them from the CDN: `https://cdn.jsdelivr.net/gh/atwalabs/cube-icons@1.0.0/icons.js` and `.../cubes.js`. In frameworks, load them in the browser only (see `references/recipes.md`, "Frameworks").
+3. **Pick or draw the icon.** Use a built-in name when one fits (list below). Otherwise draw one as rows of palette keys, following "Drawing an icon" below.
+4. **Write the code.** Make a stage on a sized canvas, then call `show`, `scroll`, `build`, `sequence` or `explode`. Start from the matching recipe in `references/recipes.md`.
+5. **Finish.** Give the canvas a CSS width and height, add `role="img"` and an `aria-label` (or `aria-hidden="true"` if decorative), run hover effects on keyboard focus too, and call `stage.destroy()` when a component unmounts.
+
+## The minimum
+
+```html
+<canvas id="hero-icon" style="width:360px;height:280px" role="img" aria-label="A rocket"></canvas>
+<script src="icons.js"></script>
+<script src="cubes.js"></script>
+<script>
+  const stage = CubeIcons.stage(document.getElementById("hero-icon"), { look: "soft" });
+  stage.show("rocket");
+</script>
+```
+
+## Built-in icons
+
+close, bolt, sword, briefcase, person, phone, browser, envelope, chart, terminal, heart, star, rocket, bulb, camera, gamepad, music, globe, lock, folder, coffee, chat, clock, check, search, download, cursor, home, bell, gear, calendar, pin, wifi, battery, play, arrow, trash, pencil, code, key, bag, cart, gift, trophy, diamond, crown, book, headphones, umbrella, flag, sun, moon, cloud, tree, leaf, fire, planet, sparkle, smile, ghost, robot.
+
+## Drawing an icon
+
+An icon is an array of equal-length strings, read top to bottom like a picture. Each character is a palette key; `.` is empty.
+
+| Key | Colour | Key | Colour |
+|---|---|---|---|
+| `B` | cobalt blue | `G` | green |
+| `W` | paper white | `P` | lilac |
+| `K` | grey | `C` | cyan |
+| `L` | light grey | `M` | pink |
+| `D` | near black | `N` | brown |
+| `R` | red | `O` | orange |
+| `Y` | yellow | | |
+
+Rules that make icons read well:
+
+- **8–16 columns wide, 6–14 rows tall.** Every row the same length. Bigger loses the chunky look; a stage holds 900 cubes (cells × depth) by default.
+- **Silhouette first.** Make the outline recognisable in one colour before adding detail; check it at a glance by reading the rows.
+- **Outline and fill:** a darker or contrasting outline (`K`, `D`) around a fill colour, then one accent detail (a gold clasp, a red flag, a blue window).
+- **Symmetry** for objects that are symmetric (trophies, bells, faces): mirror each row.
+- **Avoid single isolated cells** except for deliberate details like eyes or sparkles.
+- To place it by name, add it to the library: `Object.assign(window.CUBE_ICONS, { badge: [...] })`. Or pass the rows straight to `stage.show(rows)`.
+- **Own colours:** an icon can carry extra palette keys as `{ colors: { a: "#eb234f", b: "#79a93e" }, rows: ["..aa..", "bbbbbb"] }`. Use lowercase letters for them. Prefer the built-in palette unless the brief needs exact colours.
+
+Example (a coffee cup):
+
+```js
+coffee: [
+  "..W..W.....",
+  "...W..W....",
+  "...........",
+  "KKKKKKKKK..",
+  "KWWWWWWWKKK",
+  "KWWWWWWWK.K",
+  "KWWWWWWWKKK",
+  "KWWWWWWWK..",
+  ".KKKKKKK...",
+],
+```
+
+For words, use `CubeIcons.text("Hello", { color: "B" })`: a 5-row pixel font with A–Z, 0–9 and `. , : ! ? - + ' & /`.
+
+## Options that matter most
+
+```js
+CubeIcons.stage(canvas, {
+  look: "soft",      // flat (default) · soft · clay · candy · paper · outline · pixel · glass · neon · wire · holo
+  view: "front",     // front (default) · iso
+  depth: 2,          // cubes deep, 1–5
+  gap: 0.06,         // space between cubes, 0–0.4
+  tint: null,        // one brand ink, e.g. "#2f3cff": every colour redrawn in its shades
+  ease: "expo",      // expo (default, soft landing) · cubic · back · elastic · linear
+  duration: 700,     // ms per cube flight
+  stagger: 260,      // ms of random delay per cube
+  spin: 0.25,        // turns while flying
+  from: "auto",      // auto · below · above · left · right · center
+  magnet: 0,         // cubes near the pointer pop forward (try 1.5)
+  glow: 0,           // bloom around the cubes, 0–1 (great with tint on dark pages)
+  float: 0,          // idle motion, 0–1: the icon sways and bobs, loose cubes drift
+  tilt: true,        // depth leans with the mouse
+});
+```
+
+Match the look to the page: `soft`, `clay`, `candy`, `paper` and `outline` suit light pages; `glass`, `neon` and `holo` suit dark ones; `wire` with a light `tint` suits dark or coloured sections; `pixel` is flat retro pixel art anywhere. Full option and API tables are in `references/api.md`.
+
+## Methods
+
+- `stage.show(icon)`: build an icon (a name or rows). Showing a different icon morphs into it.
+- `stage.clear()`: fly apart and fade.
+- `stage.build(icon, progress)`: part-built, 0–1, bottom row first. Drive it from scroll, upload progress, timers.
+- `stage.explode(clientX?, clientY?)`: knock cubes loose; they settle back.
+- `stage.burst()`: the cubes rush toward the viewer and fade (menu or page transitions).
+- `stage.scatter(count, { icon })`: loose cubes across the canvas; a later `show()` gathers them into the icon.
+- `stage.set(options)`, `stage.destroy()`.
+- `CubeIcons.scroll(stage, icon, { mode: "scrub" | "trigger" })`, `CubeIcons.sequence(stage, icons, { every })`, `CubeIcons.still(canvas, icon, options)` for static thumbnails.
+
+## Common mistakes
+
+- **No canvas size.** The canvas needs a CSS width and height, or it renders 0 pixels tall.
+- **Script order.** Load `icons.js` before calling `show()` with a name, and `cubes.js` before calling `CubeIcons`.
+- **Server rendering.** Never touch `CubeIcons` at module top level in Next.js, Nuxt or SvelteKit; create stages in an effect or mount hook.
+- **Too many cubes.** A 20×20 icon at depth 3 is 1,200 cubes; lower depth, draw smaller, or raise `max`.
+- **Hover only.** Also trigger on `focus` so keyboard users see the effect.
+
+## References
+
+- `references/recipes.md`: copy-ready code for menus, buttons, empty states, loaders, morph sequences, explode, magnet, text, feature cards, scroll sections, and every framework.
+- `references/api.md`: every option, method and helper, with defaults.
+- `assets/cubes.js`, `assets/icons.js`: the engine and icon library to copy into the project.
+
+# Cube Icons API
+
+## Options
+
+Pass to `CubeIcons.stage(canvas, options)` or `CubeIcons.still(canvas, icon, options)`; change later with `stage.set(options)`. Changing `depth`, `palette`, `tint` or `max` rebuilds the icon; everything else just redraws. `CubeIcons.DEFAULTS` holds the defaults.
+
+| Option | Default | What it does |
+|---|---|---|
+| `look` | `"flat"` | One of `CubeIcons.LOOKS`: `flat`, `soft`, `clay`, `candy`, `paper`, `outline`, `pixel`, `glass`, `neon`, `wire`, `holo`. |
+| `view` | `"front"` | `"front"` (square-on, depth as a slanted side) or `"iso"`. |
+| `depth` | `2` | Cubes deep per pixel, 1–5. |
+| `gap` | `0` | Space between cubes, 0–0.4 of a cube. |
+| `tint` | `null` | One ink colour; every palette colour is redrawn in its shades by lightness. |
+| `palette` | `PALETTE` | Colours by key, as `rgb()` or hex. |
+| `shadow` | on for soft, clay and candy | Contact shadow under the icon; `true`/`false` forces it. |
+| `duration` | `700` | Ms each cube's flight takes. |
+| `ease` | `"expo"` | One of `CubeIcons.EASES`: `expo`, `cubic`, `back`, `elastic`, `linear`. |
+| `stagger` | `260` | Up to this many ms of random delay per cube. |
+| `spin` | `0.25` | Turns while flying; cubes always land square. |
+| `from` | `"auto"` | Where hidden cubes start: `below`, `above`, `left`, `right`, `center`. |
+| `magnet` | `0` | How far cubes near the pointer pop forward, in cubes. |
+| `glow` | `0` | Bloom around the cubes, 0–1. Neon glows by default. |
+| `float` | `0` | Idle motion, 0–1: the built icon sways and bobs; loose cubes from `scatter()` drift. |
+| `tilt` | `true` | Depth leans with the mouse. |
+| `size` | `"auto"` | Pixels per cube, or fit the canvas. |
+| `x`, `y` | `0.5` | Where the icon sits in the canvas, 0–1. |
+| `max` | `900` | Cubes the stage holds. |
+
+## Stage methods
+
+| Call | What it does |
+|---|---|
+| `stage.show(icon)` | Build an icon: a name from `CUBE_ICONS`, an array of rows, or `{ colors, rows }` with its own colour keys. A different icon morphs from the current one. |
+| `stage.clear()` | Fly apart and fade. |
+| `stage.build(icon, progress)` | Part-built, 0 scattered to 1 whole, bottom row first, slightly shuffled. Safe to call every frame. |
+| `stage.explode(clientX?, clientY?, force = 6)` | Knock built cubes away from a page point (or the middle); they settle back. |
+| `stage.burst({ force, dur })` | The cubes rush toward the viewer, growing and fading. Nothing is left showing. |
+| `stage.scatter(count, { icon, color, alpha, size })` | Loose cubes across the canvas; a following `show()` gathers them. |
+| `stage.set(options)` | Change options live. |
+| `stage.options` | A copy of the current options. |
+| `stage.canvas` | The canvas. |
+| `stage.destroy()` | Stop drawing and remove listeners. |
+
+## Helpers
+
+| Call | Returns | What it does |
+|---|---|---|
+| `CubeIcons.scroll(stage, icon, { mode, target, hold, range })` | `{ destroy }` | `mode: "scrub"` (default) follows the scroll; `"trigger"` builds at half in view and clears when it leaves. |
+| `CubeIcons.sequence(stage, icons, { every = 2000 })` | `{ destroy }` | Shows icons in turn. |
+| `CubeIcons.text(str, { color = "B", spacing = 1, line = 1 })` | rows | 5-row pixel font: A–Z, 0–9, `. , : ! ? - + ' & /`; `\n` for lines. |
+| `CubeIcons.still(canvas, icon, options)` | – | Draws once, settled. |
+| `CubeIcons.voxels(icon, depth, palette)` | `[{ x, y, z, col }]` | Cube positions, for custom rendering. |
+| `CubeIcons.PALETTE`, `DEFAULTS`, `LOOKS`, `EASES`, `version` | – | Built-in values. |
+
+## Behaviour
+
+- Draws only while something moves, when the pointer moves (tilt, magnet) and on resize; pauses while scrolled out of view.
+- `prefers-reduced-motion: reduce` makes icons appear in place: no flight, spin or stagger.
+- Device pixel ratio is capped at 2.
+- Console warnings: an unknown icon name, and an icon that needs more cubes than `max`.
+
+# Cube Icons recipes
+
+Each recipe assumes `icons.js` and `cubes.js` are loaded, in that order. Give every canvas a CSS width and height.
+
+## Contents
+
+- Menu hover
+- Button hover
+- Empty state
+- Loading with progress
+- Morph sequence
+- Click to explode
+- Cursor magnet
+- Text in cubes
+- Feature cards
+- Scroll sections
+- One brand colour
+- Frameworks: a shared loader, React / Next.js, Vue / Nuxt, Svelte, Framer, Webflow, WordPress
+
+## Menu hover
+
+Nothing shows until a link is hovered; each link builds its own object.
+
+```html
+<nav class="menu">
+  <ul id="menu">
+    <li><a href="/" data-icon="home">Home</a></li>
+    <li><a href="/work" data-icon="briefcase">Work</a></li>
+    <li><a href="/shop" data-icon="bag">Shop</a></li>
+    <li><a href="/contact" data-icon="envelope">Contact</a></li>
+  </ul>
+  <canvas id="menu-cubes" style="width:100%;height:320px" aria-hidden="true"></canvas>
+</nav>
+<script>
+  const stage = CubeIcons.stage(document.getElementById("menu-cubes"), { from: "below" });
+  const menu = document.getElementById("menu");
+  menu.querySelectorAll("a").forEach((a) => {
+    a.addEventListener("pointerenter", () => stage.show(a.dataset.icon));
+    a.addEventListener("focus", () => stage.show(a.dataset.icon));
+  });
+  menu.addEventListener("pointerleave", () => stage.clear());
+</script>
+```
+
+## Button hover
+
+The icon sits in the button; hovering knocks its cubes loose and they settle back.
+
+```html
+<button class="cube-btn"><canvas style="width:56px;height:44px" aria-hidden="true"></canvas>Download</button>
+<script>
+  document.querySelectorAll(".cube-btn").forEach((btn) => {
+    const s = CubeIcons.stage(btn.querySelector("canvas"), { tilt: false, max: 260, duration: 450 });
+    s.show("download");
+    btn.addEventListener("pointerenter", () => s.explode(null, null, 3));
+    btn.addEventListener("focus", () => s.explode(null, null, 3));
+  });
+</script>
+```
+
+## Empty state
+
+Builds once half of it is in view.
+
+```html
+<div class="empty">
+  <canvas id="empty-cubes" style="width:100%;height:180px" role="img" aria-label="A friendly ghost"></canvas>
+  <h3>Nothing here yet</h3>
+  <p>Your saved items will show up here.</p>
+</div>
+<script>
+  const stage = CubeIcons.stage(document.getElementById("empty-cubes"), { from: "below", tilt: false });
+  CubeIcons.scroll(stage, "ghost", { mode: "trigger" });
+</script>
+```
+
+## Loading with progress
+
+`build()` takes 0–1; call it as progress arrives, then swap to a tick.
+
+```js
+const stage = CubeIcons.stage(canvas, { tilt: false });
+function onProgress(p) {            // p from 0 to 1
+  if (p < 1) stage.build("rocket", p);
+  else stage.show("check");
+}
+```
+
+## Menu reveal with glow (burst, scatter, float)
+
+A full-screen menu: the hero object bursts toward the viewer, the page blurs, and loose glowing cubes gather beside the links, taking each link's shape on hover.
+
+```js
+const look = { look: "soft", tint: "#3cff3c", glow: 0.8, float: 0.6, gap: 0.04 };
+const hero = CubeIcons.stage(heroCanvas, { ...look, x: 0.72 });
+const menu = CubeIcons.stage(menuCanvas, look);
+hero.show("rocket");
+
+menuButton.addEventListener("click", () => {
+  hero.burst();                                 // rushes at the viewer and fades
+  page.classList.add("menu-open");              // CSS: blur the page, fade the menu in
+  menu.scatter(90, { icon: "rocket" });         // loose cubes...
+  setTimeout(() => menu.show("rocket"), 350);   // ...gather into the object
+});
+links.forEach((a) => a.addEventListener("pointerenter", () => menu.show(a.dataset.icon)));
+```
+
+Pair glow with a dark page; `tint` gives the one-colour neon-sign feel.
+
+## Floating cubes
+
+```js
+const stage = CubeIcons.stage(canvas, { look: "soft", tint: "#3cff3c", glow: 0.8, float: 0.7 });
+stage.scatter(140, { icon: "bolt" });           // loose cubes drift across the section
+button.addEventListener("click", () => stage.show("bolt"));   // they gather, and keep floating
+```
+
+## Morph sequence
+
+```js
+CubeIcons.sequence(CubeIcons.stage(canvas), ["home", "bag", "cart", "gift", "trophy"], { every: 1800 });
+```
+
+## Click to explode
+
+```js
+const stage = CubeIcons.stage(canvas, { tilt: false });
+stage.show("star");
+canvas.addEventListener("click", (e) => stage.explode(e.clientX, e.clientY));
+```
+
+## Cursor magnet
+
+```js
+CubeIcons.stage(canvas, { magnet: 1.6, tilt: false }).show("smile");
+```
+
+## Text in cubes
+
+```js
+stage.show(CubeIcons.text("Hello", { color: "B" }));   // "\n" for more lines
+```
+
+Give text a wide canvas: each letter is about 5 cells wide plus a space.
+
+## Feature cards
+
+One stage per card, isometric and soft, built on hover or focus.
+
+```html
+<div class="feature" tabindex="0" data-icon="rocket">
+  <canvas style="width:100%;height:190px" aria-hidden="true"></canvas>
+  <h3>Fast</h3><p>Ships in a day.</p>
+</div>
+<script>
+  document.querySelectorAll(".feature").forEach((card) => {
+    const s = CubeIcons.stage(card.querySelector("canvas"), { view: "iso", look: "soft", depth: 1, tilt: false, max: 400 });
+    const on = () => s.show(card.dataset.icon), off = () => s.clear();
+    card.addEventListener("pointerenter", on); card.addEventListener("focusin", on);
+    card.addEventListener("pointerleave", off); card.addEventListener("focusout", off);
+  });
+</script>
+```
+
+## Scroll sections
+
+`scrub` ties the build to the scroll position (bottom row first) and takes it apart again as the section leaves; `trigger` flies the whole icon in at half in view.
+
+```js
+document.querySelectorAll("[data-cube]").forEach((canvas) => {
+  const stage = CubeIcons.stage(canvas, { tilt: false });
+  CubeIcons.scroll(stage, canvas.dataset.cube);                 // scrub
+  // CubeIcons.scroll(stage, canvas.dataset.cube, { mode: "trigger" });
+});
+```
+
+Options: `target` (the element to time by; defaults to the canvas), `hold` (0.15: how far from mid-screen, in screen heights, it stays whole), `range` (0.4: how far after that it takes to come apart).
+
+## One brand colour
+
+```js
+CubeIcons.stage(canvas, { tint: "#ff4d8d" });                                   // every colour in shades of one ink
+CubeIcons.stage(canvas, { palette: { ...CubeIcons.PALETTE, B: "#ff4d8d" } });   // just swap blue
+```
+
+## Frameworks
+
+### A shared loader
+
+Load the scripts once, in order, in the browser. Point `BASE` at wherever the two files are served (for example `/vendor/cube-icons/`).
+
+```js
+// cube-icons.js
+const BASE = "/vendor/cube-icons/";
+let loading;
+export function loadCubeIcons() {
+  if (window.CubeIcons) return Promise.resolve(window.CubeIcons);
+  loading ??= Promise.all(["icons.js", "cubes.js"].map((file) => new Promise((resolve, reject) => {
+    const s = document.createElement("script");
+    s.src = BASE + file; s.async = false; s.onload = resolve; s.onerror = reject;
+    document.head.append(s);
+  }))).then(() => window.CubeIcons);
+  return loading;
+}
+```
+
+### React / Next.js
+
+```jsx
+"use client";
+import { useEffect, useRef } from "react";
+import { loadCubeIcons } from "./cube-icons";
+
+export function CubeIcon({ icon = "rocket", options = {}, label, style }) {
+  const ref = useRef(null);
+  const opts = JSON.stringify(options);
+  useEffect(() => {
+    let stage, cancelled = false;
+    loadCubeIcons().then((CubeIcons) => {
+      if (cancelled) return;
+      stage = CubeIcons.stage(ref.current, JSON.parse(opts));
+      stage.show(icon);
+    });
+    return () => { cancelled = true; stage?.destroy(); };
+  }, [icon, opts]);
+  return <canvas ref={ref} role="img" aria-label={label ?? icon} style={{ width: "100%", height: 280, ...style }} />;
+}
+```
+
+### Vue / Nuxt
+
+```vue
+<script setup>
+import { onMounted, onBeforeUnmount, ref } from "vue";
+import { loadCubeIcons } from "./cube-icons";
+const props = defineProps({ icon: { type: String, default: "rocket" }, options: Object, label: String });
+const el = ref(null);
+let stage;
+onMounted(async () => { const CubeIcons = await loadCubeIcons(); stage = CubeIcons.stage(el.value, props.options); stage.show(props.icon); });
+onBeforeUnmount(() => stage?.destroy());
+</script>
+<template><canvas ref="el" role="img" :aria-label="label ?? icon" style="width:100%;height:280px" /></template>
+```
+
+In Nuxt, wrap the component in `<ClientOnly>`.
+
+### Svelte
+
+```svelte
+<script>
+  import { onMount } from "svelte";
+  import { loadCubeIcons } from "./cube-icons";
+  export let icon = "rocket", options = {}, label = icon;
+  let el;
+  onMount(() => { let stage; loadCubeIcons().then((C) => { stage = C.stage(el, options); stage.show(icon); }); return () => stage?.destroy(); });
+</script>
+<canvas bind:this={el} role="img" aria-label={label} style="width:100%;height:280px"></canvas>
+```
+
+### Framer
+
+Insert → Utility → Embed, set to HTML, and paste a complete snippet (canvas, both scripts, and the call). For a reusable code component, use the React component above.
+
+### Webflow
+
+Add the two script tags in Page or Site settings → Custom code → Before `</body>`. Then an Embed element:
+
+```html
+<canvas id="cube" style="width:100%;height:280px" aria-label="A rocket"></canvas>
+<script>addEventListener("load", () => CubeIcons.stage(document.getElementById("cube")).show("rocket"));</script>
+```
+
+### WordPress
+
+A Custom HTML block with a complete snippet. If a security plugin strips scripts, add the two script tags in the theme's footer settings instead.

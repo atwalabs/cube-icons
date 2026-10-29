@@ -15,6 +15,7 @@
   <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-f1efea?style=flat-square"></a>
   <img alt="No dependencies" src="https://img.shields.io/badge/dependencies-0-ff8c32?style=flat-square">
   <img alt="9 KB gzipped" src="https://img.shields.io/badge/engine-9%20KB%20gzipped-bbaffe?style=flat-square">
+  <a href="https://skills.sh/atwalabs/cube-icons"><img alt="Agent Skill on skills.sh" src="https://skills.sh/b/atwalabs/cube-icons"></a>
 </p>
 
 <p align="center">
@@ -22,6 +23,7 @@
   <a href="https://cube-icons.attwa.me/docs.html"><b>Docs</b></a> ·
   <a href="https://cube-icons.attwa.me/examples.html"><b>28 recipes</b></a> ·
   <a href="https://cube-icons.attwa.me/editor.html"><b>Editor</b></a> ·
+  <a href="#use-with-claude"><b>AI skill</b></a> ·
   <a href="https://cube-icons.attwa.me/pro.html"><b>Pro</b></a>
 </p>
 
@@ -120,7 +122,24 @@ Draw them in [the editor](https://cube-icons.attwa.me/editor.html), or drop an i
 
 ## Use with Claude
 
-The [`skill/cube-icons`](skill/cube-icons) folder is a Claude skill. In Claude Code, copy it to `~/.claude/skills/cube-icons`. In the Claude apps, zip the folder and upload it under Settings → Capabilities → Skills. Then ask for things like *"add a cube icon menu to my landing page"*.
+Cube Icons comes with an [Agent Skill](skill/cube-icons/SKILL.md) that teaches Claude and other AI coding assistants to add cube icons to a page and draw new ones.
+
+**Claude Code**, as a plugin:
+
+```
+/plugin marketplace add atwalabs/cube-icons
+/plugin install cube-icons@cube-icons
+```
+
+**Cursor, Codex, Gemini CLI, opencode and other agents**, with the [skills](https://skills.sh) CLI:
+
+```bash
+npx skills add atwalabs/cube-icons
+```
+
+**Claude apps:** zip the [`skill/cube-icons`](skill/cube-icons) folder and upload it under Settings → Capabilities → Skills.
+
+Then ask for things like *"add a cube icon menu to my landing page"* or *"draw a coffee cup icon for the empty state"*. AI tools that read websites can use [llms.txt](https://cube-icons.attwa.me/llms.txt) and [llms-full.txt](https://cube-icons.attwa.me/llms-full.txt).
 
 ## Browser support
 

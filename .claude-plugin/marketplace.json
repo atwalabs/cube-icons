@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "cube-icons",
-      "source": "./",
+      "source": "./skill",
       "description": "Animated pixel icons built from 3D cubes for any web page, with a skill that writes the code and draws new icons."
     }
   ]

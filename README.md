@@ -15,7 +15,6 @@
   <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-f1efea?style=flat-square"></a>
   <img alt="No dependencies" src="https://img.shields.io/badge/dependencies-0-ff8c32?style=flat-square">
   <img alt="9 KB gzipped" src="https://img.shields.io/badge/engine-9%20KB%20gzipped-bbaffe?style=flat-square">
-  <a href="https://skills.sh/atwalabs/cube-icons"><img alt="Agent Skill on skills.sh" src="https://skills.sh/b/atwalabs/cube-icons"></a>
 </p>
 
 <p align="center">
@@ -147,7 +146,7 @@ Current Chrome, Edge, Firefox and Safari. The neon glow uses canvas filters and 
 
 ## Licence and credits
 
-MIT: free for personal and commercial use. See [LICENSE](LICENSE).
+Made by [Mohamed Atwa](https://attwa.me). MIT: free for personal and commercial use. See [LICENSE](LICENSE).
 
 The idea of a cube swarm that builds an object per menu item was inspired by the menu on [sparkk.fr](https://sparkk.fr). Cube Icons is an independent, dependency-free take that builds its shapes from pixel art. Related work: [heerich.js](https://github.com/meodai/heerich), [claude-pxl](https://github.com/crsolver/claude-pxl).
 
